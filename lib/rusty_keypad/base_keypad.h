@@ -66,6 +66,7 @@ typedef enum
     T9
 
 } KeypadTypes;
+
 /**
  * @enum KeypadActionEvents
  * @brief Defines various actions or events associated with keypad interactions.
@@ -93,6 +94,7 @@ typedef enum
     /** The keypad is idle, with no current action. */
     IDLE
 } KeypadActionEvents;
+
 /**
  * @enum KeypadDriverTypes
  * @brief Defines different types of keypad scanning methods.
@@ -156,6 +158,7 @@ public:
         uint8_t row,
         uint8_t col,
         uint8_t mode = INPUT_PULLUP);
+
     /**
      * @brief Enables the keypad functionality.
      *
@@ -165,6 +168,7 @@ public:
      * @note Call this function to begin listening for key events.
      */
     static void enable();
+
     /**
      * @brief Disables the keypad functionality.
      *
@@ -174,6 +178,7 @@ public:
      * @note Call this function to stop listening for key events.
      */
     static void disable();
+
     /**
      * @brief Specifies the mode for keypad pins.
      *
@@ -186,6 +191,7 @@ public:
      * @note Ensure to set this variable appropriately based on your circuit design.
      */
     static uint8_t pins_mode;
+
     /**
      * @brief Defines the timeout duration for key press, in milliseconds.
      *
@@ -198,6 +204,7 @@ public:
      * @note The value is specified in milliseconds and is used to manage prolonged key presses in non-T9 modes.
      */
     static unsigned long keydown_timeout;
+
     /**
      * @brief Defines the duration for a long key press, in milliseconds.
      *
@@ -208,6 +215,7 @@ public:
      * @note The value is in milliseconds, and it should be less than `keydown_timeout` for proper functionality.
      */
     static unsigned long long_press_duration;
+
     /**
      * @brief Defines the duration for cycling through T9 characters, in milliseconds.
      *
@@ -221,6 +229,7 @@ public:
      * between characters when the keypad is in T9 mode.
      */
     static unsigned long t9_duration;
+
     /**
      * @brief Registers a listener for key down events.
      *
@@ -240,6 +249,7 @@ public:
      * addKeyDownListener(onKeyDown);
      */
     static void addKeyDownListener(void (*listener)(char));
+
     /**
      * @brief Registers a listener for key up events.
      *
@@ -259,6 +269,7 @@ public:
      * addKeyUpListener(onKeyUp);
      */
     static void addKeyUpListener(void (*listener)(char));
+
     /**
      * @brief Registers a listener for long press events.
      *
@@ -278,6 +289,7 @@ public:
      * addLongPressListener(onLongPress);
      */
     static void addLongPressListener(void (*listener)(char));
+
     /**
      * @brief Registers a listener for multiple key events.
      *
@@ -297,6 +309,7 @@ public:
      * addMultipleKeyListener(onMultipleKeyPress);
      */
     static void addMultipleKeyListener(void (*listener)(String));
+
     /**
      * @brief Sets the type of the keypad.
      *
@@ -310,6 +323,7 @@ public:
      * setType(INTEGER);  // Configures the keypad for integer input
      */
     static void setType(KeypadTypes type);
+
     /**
      * @brief Retrieves the current type of the keypad.
      *
@@ -326,6 +340,7 @@ public:
      * }
      */
     static KeypadTypes getType();
+
     /**
      * @brief Checks if the keypad is currently enabled.
      *
@@ -361,6 +376,7 @@ protected:
      * reset();  // Clears interrupts, clears entered text, and resets all event handlers
      */
     static void reset();
+
     /**
      * @brief Clears the text entered from the keypad.
      *
@@ -374,6 +390,7 @@ protected:
      * clearScreen();  // Resets the text entered from the keypad
      */
     static void clearScreen();
+
     /**
      * @brief Linked list of `RustyKey` objects.
      *
@@ -383,6 +400,7 @@ protected:
      * @note Ensure proper management of this linked list to avoid memory leaks or access issues.
      */
     static RustyKeyList *KeyList;
+
     /**
      * @brief Configures the keypad with factory default settings.
      *
@@ -414,6 +432,7 @@ protected:
      *       it for the first time.
      */
     static void setFactoryConfig();
+
     /**
      * @brief Pointer to the function handling key down events.
      *
@@ -423,6 +442,7 @@ protected:
      * @note This function pointer is used by the `addKeyDownListener` method to register a key down event handler.
      */
     static void (*keyDownListener)(char);
+
     /**
      * @brief Pointer to the function handling key up events.
      *
@@ -432,6 +452,7 @@ protected:
      * @note This function pointer is used by the `addKeyUpListener` method to register a key up event handler.
      */
     static void (*keyUpListener)(char);
+
     /**
      * @brief Pointer to the function handling long press events.
      *
@@ -442,6 +463,7 @@ protected:
      * @note This function pointer is used by the `addLongPressListener` method to register a long press event handler.
      */
     static void (*longPressListener)(char);
+
     /**
      * @brief Pointer to the function handling multiple key events.
      *
@@ -451,6 +473,7 @@ protected:
      * @note This function pointer is used by the `addMultipleKeyListener` method to register a multiple key event handler.
      */
     static void (*multipleKeyListener)(String);
+
     /**
      * @brief Indicates whether an interrupt has occurred.
      *
@@ -463,18 +486,131 @@ protected:
     static bool interrupted;
 
 private:
+    /**
+     * @brief Stores the number of rows in the keypad matrix.
+     *
+     * This static variable holds the size of the rows for the keypad matrix. It defines how many rows
+     * are configured for the keypad layout.
+     */
     static uint8_t row_size;
+
+    /**
+     * @brief Stores the number of columns in the keypad matrix.
+     *
+     * This static variable holds the size of the columns for the keypad matrix. It defines how many columns
+     * are configured for the keypad layout.
+     */
     static uint8_t col_size;
+
+    /**
+     * @brief Character used for floating-point input in float mode.
+     *
+     * This static variable stores the character used to insert a floating-point symbol (e.g., a decimal point)
+     * when the keypad is in float mode. By default, the `'#'` key is assigned to act as the floating-point input.
+     *
+     * @note This character can be changed if needed, but the default value is set to `'#'`.
+     */
     static char float_char;
+
+    /**
+     * @brief Holds the current type of the keypad.
+     *
+     * This static variable stores the type of the keypad as defined by the `KeypadTypes` enumeration.
+     * It determines the behavior and mode of the keypad, such as `INTEGER`, `FLOAT`, or `T9`.
+     */
     static KeypadTypes keypad_type;
+
+    /**
+     * @brief Indicates whether the keypad is enabled.
+     *
+     * This static boolean variable tracks whether the keypad is currently enabled.
+     * If `true`, the keypad is active and ready for input; if `false`, it is disabled.
+     */
     static bool enabled;
+
+    /**
+     * @brief Holds the text generated from keypad input.
+     *
+     * This static variable stores the string of characters entered via the keypad. It accumulates the
+     * characters as keys are pressed, allowing you to capture and work with the complete input generated
+     * from the keypad.
+     *
+     * @note The content of this variable represents the current input session and can be reset or modified
+     *       as needed.
+     */
     static String keypad_data;
+
+    /**
+     * @brief Tracks the position for the next character in the keypad input.
+     *
+     * This static variable holds the cursor position where the next character will be added in the `keypad_data` string.
+     * Each time a key is pressed, the cursor is incremented by one to point to the next position. This position
+     * can also be controlled externally to modify where the next character will be inserted.
+     *
+     * @note This allows you to track and manipulate the insertion point within the current input session.
+     */
     static unsigned int keypad_data_cursor;
+
+    /**
+     * @brief Timeout duration for triggering the IDLE event, in milliseconds.
+     *
+     * This static variable defines the duration of inactivity (in milliseconds) after which the keypad will
+     * trigger an IDLE event. The system compares the current time with the timestamp stored in `last_activity_ts`.
+     * If the time difference exceeds `idle_timeout`, the keypad is considered idle, and the IDLE event is raised.
+     *
+     * @note The timeout is checked against `last_activity_ts`, which tracks the time of the last keypad activity.
+     */
     static unsigned long idle_timeout;
+
+    /**
+     * @brief Stores the timestamp of the last keypad activity in milliseconds.
+     *
+     * This static variable holds the time of the most recent keypad interaction, recorded in milliseconds.
+     * It tracks when the last key was pressed or an action occurred on the keypad, allowing the system to
+     * monitor inactivity or trigger time-based events.
+     *
+     * @note The timestamp is based on the system clock and is updated with each keypad action.
+     */
     static unsigned long last_activity_ts;
-    static void setCursor(uint8_t x, uint8_t y);
+
+    /**
+     * @brief Appends a character to the `keypad_data` at the current cursor position.
+     *
+     * This static function adds the character entered from the keypad to the `keypad_data` string
+     * at the position specified by `keypad_data_cursor`. The cursor is automatically updated after the
+     * character is inserted. This method is typically triggered by the `KEY_UP` event, indicating that
+     * a key has been released.
+     *
+     * @param key The character to be appended to `keypad_data`.
+     *
+     * @note The cursor position (`keypad_data_cursor`) is incremented after the key is appended.
+     */
     static void appendKey(char key);
+
+    /**
+     * @brief Holds the digital output pins used to drive the keypad rows.
+     *
+     * This static pointer stores the array of digital output pins that are used to control the rows
+     * of the keypad during its operation. These pins are responsible for sending signals to the keypad rows
+     * and are essential for scanning the keypad matrix.
+     *
+     * @note The pins are configured as outputs and are used in the keypad scanning process.
+     */
     static uint8_t *row_out_pins;
+
+    /**
+     * @brief Resizes the array of row output pins to match the current configuration.
+     *
+     * This static function adjusts the size of the `row_out_pins` array based on the specified size.
+     * While `row_out_pins` is initially allocated with a size defined by `MAX_KEYPAD_MATRIX_SIZE`,
+     * if the actual number of rows in the keypad configuration is less than this maximum,
+     * this function will resize the array to save memory.
+     *
+     * @param size The new size for the `row_out_pins` array, reflecting the number of row pins required.
+     *
+     * @note This function is used to optimize memory usage by resizing the array according to the actual
+     *       keypad configuration rather than using the maximum predefined size.
+     */
     static void resizeRowPins(size_t size);
 };
 #endif
