@@ -2,17 +2,17 @@
 #include <Arduino.h>
 #include <rusty_keypad.h>
 
-RustyKey::RustyKey(char key, uint8_t row_pin, uint8_t col_pin)
+RustyKey::RustyKey(const char *key, uint8_t row_pin, uint8_t col_pin)
 {
     key_code = key;
     row_out_pin = row_pin;
     col_in_pin = col_pin;
     current_state = false;
     enabled = true;
-    setEvent(KEY_IDLE);    
+    char_index = 0;
+    setEvent(KEY_IDLE);
     pinMode(row_pin, OUTPUT);
     pinMode(col_pin, RustyKeypad::pins_mode);
-    
 }
 
 RustyKey::~RustyKey()
@@ -22,7 +22,7 @@ RustyKey::~RustyKey()
 
 bool RustyKey::check()
 {
-    if(!isScanAvailable())
+    if (!isScanAvailable())
     {
         return false;
     }
@@ -32,30 +32,55 @@ bool RustyKey::check()
     {
         if (new_state && current_event != WAIT)
         {
+            if (current_event == KEY_UP)
+            {
+                char_index = 0;
+                setEvent(KEY_DOWN);
+                return true;
+            }
             setEvent(WAIT);
         }
         else if (!new_state && current_event != KEY_IDLE)
         {
-            setEvent(KEY_IDLE);           
+            setEvent(KEY_IDLE);
         }
         return !current_state ? false : checkTimeout();
     }
     current_state = new_state;
     if (!new_state)
     {
-        analyzeState();        
+        analyzeState();
         return true;
     }
+    char_index = 0;
     setEvent(KEY_DOWN);
     return true;
 }
+void RustyKey::nextCharIndex()
+{
+    if ((char_index + 1) >= (int)strlen(key_code))
+        char_index = 0;
+    else
+        char_index++;
 
+    resetActivityTimer();
+}
 bool RustyKey::checkTimeout()
 {
+    if (RustyKeypad::getType() == T9)
+    {
+        if ((millis() - last_activity_ts) > RustyKeypad::t9_duration)
+        {
+            nextCharIndex();
+            setEvent(KEY_DOWN);
+            return true;
+        }
+        return false;
+    }
 
     if ((millis() - last_activity_ts) > RustyKeypad::keydown_timeout)
-    {        
-        setEvent(KEY_DOWN);
+    {
+        setEvent(KEY_UP);
         return true;
     }
     return false;
@@ -68,6 +93,11 @@ bool RustyKey::isPressed()
 
 void RustyKey::analyzeState()
 {
+    if (RustyKeypad::getType() == T9)
+    {
+        setEvent(KEY_UP);
+        return;
+    }
     if ((millis() - last_activity_ts) > RustyKeypad::long_press_duration)
     {
         setEvent(LONG_PRESS);
@@ -96,8 +126,9 @@ bool RustyKey::read()
 
 void RustyKey::reset()
 {
+    char_index = 0;
     current_state = false;
-    current_event = KEY_IDLE;
+    setEvent(KEY_IDLE);
 }
 
 void RustyKey::enable()
@@ -134,12 +165,17 @@ KeypadEventTypes RustyKey::getCurrentEvent() const
 
 char RustyKey::getKeyCode() const
 {
-    return key_code;
+    return key_code[char_index];
 }
 
 void RustyKey::setEvent(KeypadEventTypes e)
 {
+
     current_event = e;
+    resetActivityTimer();
+}
+void RustyKey::resetActivityTimer()
+{
     last_activity_ts = millis();
 }
 

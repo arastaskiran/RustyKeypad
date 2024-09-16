@@ -38,7 +38,8 @@
 typedef enum
 {
     INTEGER,
-    FLOAT
+    FLOAT,
+    T9
 
 } KeypadTypes;
 typedef enum
@@ -62,7 +63,7 @@ class BaseRustyKeypad
 
 public:
     static void keyboardSetup(
-        char map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
+        const char * map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
         uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
         uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
         uint8_t row,
@@ -73,10 +74,13 @@ public:
     static uint8_t pins_mode;
     static unsigned long keydown_timeout;
     static unsigned long long_press_duration;
+    static unsigned long t9_duration;  
     static void addKeyDownListener(void (*listener)(char));
     static void addKeyUpListener(void (*listener)(char));
     static void addLongPressListener(void (*listener)(char));
     static void addMultipleKeyListener(void (*listener)(String));
+    static void setType(KeypadTypes type);
+    static KeypadTypes getType();
     static bool isEnabled();
 
 protected:
@@ -89,12 +93,13 @@ protected:
     static void (*longPressListener)(char);
     static void (*multipleKeyListener)(String);
     static bool interrupted;
+    
 
 private:
     static uint8_t row_size;
     static uint8_t col_size;
     static char float_char;    
-    static uint8_t keypad_type;
+    static KeypadTypes keypad_type;
     static bool enabled;
     static String keypad_data;
     static unsigned int keypad_data_cursor;

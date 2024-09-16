@@ -21,6 +21,7 @@ void setup() {
   RustyKeypad::addKeyUpListener(keyUp);
   RustyKeypad::addMultipleKeyListener(multipleKey);
   RustyKeypad::addKeyDownListener(keyDown);
+  RustyKeypad::setType(T9);
   RustyKeypad::enable();
   
 }

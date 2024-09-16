@@ -10,7 +10,7 @@ RustyKeyList::~RustyKeyList()
     clear();
 }
 
-void RustyKeyList::append(char key, uint8_t row_pin, uint8_t col_pin)
+void RustyKeyList::append(const char * key, uint8_t row_pin, uint8_t col_pin)
 {
     RustyKeyNode *newNode = new RustyKeyNode(key, row_pin, col_pin);
 

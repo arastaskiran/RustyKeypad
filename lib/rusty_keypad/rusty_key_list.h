@@ -36,7 +36,7 @@ struct RustyKeyNode {
     RustyKeyNode* next; 
 
     
-    RustyKeyNode(char key, uint8_t row_pin, uint8_t col_pin) 
+    RustyKeyNode(const char * key, uint8_t row_pin, uint8_t col_pin) 
         : data(new RustyKey(key, row_pin, col_pin)), next(nullptr) {}
 
     // Destructor
@@ -53,7 +53,7 @@ private:
 public:
     RustyKeyList();    
     ~RustyKeyList();
-    void append(char key, uint8_t row_pin, uint8_t col_pin);    
+    void append(const char * key, uint8_t row_pin, uint8_t col_pin);    
     void clear();
     void disable();
     RustyKeyNode* getHead() const;

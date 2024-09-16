@@ -6,14 +6,16 @@ uint8_t BaseRustyKeypad::row_size{4};
 uint8_t BaseRustyKeypad::col_size{3};
 unsigned int BaseRustyKeypad::keypad_data_cursor{0};
 char BaseRustyKeypad::float_char{'*'};
-uint8_t BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
+KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
+
 String BaseRustyKeypad::keypad_data{""};
 unsigned long BaseRustyKeypad::keydown_timeout{1500};
 unsigned long BaseRustyKeypad::long_press_duration{5000};
 unsigned long BaseRustyKeypad::idle_timeout{30000};
 unsigned long BaseRustyKeypad::last_activity_ts{0};
+unsigned long BaseRustyKeypad::t9_duration{600};
 RustyKeyList *BaseRustyKeypad::KeyList{nullptr};
 uint8_t *BaseRustyKeypad::row_out_pins{nullptr};
 void (*BaseRustyKeypad::keyDownListener)(char){0};
@@ -22,7 +24,7 @@ void (*BaseRustyKeypad::keyUpListener)(char){0};
 void (*BaseRustyKeypad::longPressListener)(char){0};
 void (*BaseRustyKeypad::multipleKeyListener)(String){0};
 
-void BaseRustyKeypad::keyboardSetup(char map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
+void BaseRustyKeypad::keyboardSetup(const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
                                     uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
                                     uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
                                     uint8_t row,
@@ -97,12 +99,13 @@ void BaseRustyKeypad::appendKey(char key)
 
 void BaseRustyKeypad::setFactoryConfig()
 {
-    char map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
-        {'1', '2', '3'},
-        {'4', '5', '6'},
-        {'7', '8', '9'},
-        {'*', '0', '#'},
+    const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
+        {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
+        {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
+        {"7PQRSpqrsŞş", "8TUVtuvÜü", "9WXYZwxyz"},
+        {"*", "0 +", "#"},
     };
+
     uint8_t rows[MAX_KEYPAD_MATRIX_SIZE] = {2U, 3U, 4U, 5U};
     uint8_t cols[MAX_KEYPAD_MATRIX_SIZE] = {6U, 7U, 8U};
     keyboardSetup(
@@ -146,4 +149,14 @@ void BaseRustyKeypad::addMultipleKeyListener(void (*listener)(String))
 bool BaseRustyKeypad::isEnabled()
 {
     return enabled;
+}
+
+void BaseRustyKeypad::setType(KeypadTypes type)
+{
+    keypad_type = type;
+}
+
+KeypadTypes BaseRustyKeypad::getType()
+{
+    return keypad_type;
 }

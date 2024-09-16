@@ -17,7 +17,7 @@ class RustyKey
 {
 
 public:
-    RustyKey(char key, uint8_t row_pin, uint8_t col_pin);
+    RustyKey(const char * key, uint8_t row_pin, uint8_t col_pin);
     ~RustyKey();
     bool check();
     void reset();
@@ -32,9 +32,10 @@ protected:
 private:
     unsigned long last_activity_ts;
     KeypadEventTypes current_event;
-    char key_code;
+    const char * key_code;
     uint8_t row_out_pin;
     uint8_t col_in_pin;
+    uint8_t char_index;
     bool enabled;
     void rowActive();
     void rowPassive();
@@ -43,5 +44,7 @@ private:
     bool checkTimeout();
     void setEvent(KeypadEventTypes e);
     bool isScanAvailable();
+    void nextCharIndex();
+    void resetActivityTimer();
 };
 #endif
