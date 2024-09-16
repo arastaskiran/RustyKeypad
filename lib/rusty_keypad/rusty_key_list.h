@@ -1,31 +1,33 @@
 /*
-||
-|| @file rusty_key_list.h
-|| @version 1.0
-|| @author Aras TAŞKIRAN
-|| @contact aras@arastaskiran.com
-||
-|| @description
-|| | Add the configurations for the Rusty Keypad program to this class
-|| #
-||
-|| @license
-|| | This library is free software; you can redistribute it and/or
-|| | modify it under the terms of the GNU Lesser General Public
-|| | License as published by the Free Software Foundation; version
-|| | 2.1 of the License.
-|| |
-|| | This library is distributed in the hope that it will be useful,
-|| | but WITHOUT ANY WARRANTY; without even the implied warranty of
-|| | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-|| | Lesser General Public License for more details.
-|| |
-|| | You should have received a copy of the GNU Lesser General Public
-|| | License along with this library; if not, write to the Free Software
-|| | Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-|| #
-||
-*/
+ * RustyKeyList Class
+ * 
+ * Author: Aras TAŞKIRAN
+ * Email: aras@arastaskiran.com
+ * Date: 2024-09-2024 
+ * 
+ * Description:
+ * 
+ * The key list is stored within this class. Instead of a standard matrix scan,
+ * the objects scan themselves, which I found to be more logical. This approach may seem unusual,
+ * but it aligns with my preference. As the structure suggests,
+ * this class is implemented as a linked list, so caution is advised when working with it.
+ * 
+ * License:
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #ifndef RUSTY_KEYPAD_LIST_H
 #define RUSTY_KEYPAD_LIST_H
 #include <rusty_key.h>
