@@ -1,3 +1,6 @@
+with open("src/main.cpp", "w") as file:
+    file.write(
+        """\
 #include <Arduino.h>
 #include <rusty_keypad.h>
 
@@ -29,3 +32,5 @@ void loop() {
   RustyKeypad::scan();  
   // put your main code here, to run repeatedly:
 }
+"""
+    )

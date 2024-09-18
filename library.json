@@ -1,0 +1,38 @@
+{
+    "name": "RustyKeypad",
+    "version": "1.0.0",
+    "description": "A flexible keypad library for embedded systems, supporting T9 input, long presses, and various event types.",
+    "keywords": [
+      "keypad",
+      "T9",
+      "embedded",
+      "input",
+      "keyboard"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/arastaskiran/RustyKeypad.git"
+    },
+    "authors": [
+      {
+        "name": "Aras Taşkıran",
+        "email": "aras@arastaskiran.com",
+        "maintainer": true
+      }
+    ],
+    "license": "GPL-3.0-or-later",
+    "frameworks": [
+      "arduino"
+    ],
+    "platforms": [
+      "atmelavr",
+      "espressif32",
+      "espressif8266"
+    ],
+    "headers": [
+      "RustyKeypad.h"
+    ],
+    "examples": [
+      "examples/*"
+    ]
+  }

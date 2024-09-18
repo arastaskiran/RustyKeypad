@@ -1,0 +1,29 @@
+# Class names (highlighted in orange)
+RustyKey            KEYWORD1
+RustyKeyList        KEYWORD1
+
+# Functions (highlighted in brown)
+enable              KEYWORD2
+disable             KEYWORD2
+reset               KEYWORD2
+getKeyCode          KEYWORD2
+check               KEYWORD2
+isPressed           KEYWORD2
+setEvent            KEYWORD2
+getCurrentEvent     KEYWORD2
+read                KEYWORD2
+analyzeState        KEYWORD2
+checkTimeout        KEYWORD2
+isScanAvailable     KEYWORD2
+nextCharIndex       KEYWORD2
+resetActivityTimer  KEYWORD2
+rowActive           KEYWORD2
+rowPassive          KEYWORD2
+append              KEYWORD2
+clear               KEYWORD2
+
+# Keywords for enums, variables, and constants
+KeypadTypes         KEYWORD2
+KeypadEventTypes    KEYWORD2
+INPUT_PULLUP        LITERAL1
+RUSTY_KEYPAD_KEY_FILTER_MILLIS LITERAL1
