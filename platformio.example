@@ -1,9 +1,15 @@
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
-;   Upload options: custom upload port, speed and extra flags
-;   Library options: dependencies, extra library storages
-;   Advanced options: extra scripting
+;   Important Note: 
+;   ---------------------------------------------
+;   Please make a copy of this file for development and rename it to platformio.ini, 
+;   then customize it as needed.
+;   The line extra_scripts = pre:.platform/build_main.py in the platformio.ini file 
+;   will generate src/main.cpp before compilation. Note that main.cpp is included in .gitignore,
+;   so you can modify it as needed. Similarly, the platformio.ini file is also included in .gitignore.
+;
+;   However, please do not rename the platformio.example file to platformio.ini.
+;   Pull requests with this change will not be accepted.
 ;
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
