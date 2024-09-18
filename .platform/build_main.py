@@ -1,6 +1,9 @@
-with open("src/main.cpp", "w") as file:
-    file.write(
-        """\
+import os
+
+if not os.path.isfile("src/main.cpp"):
+    with open("src/main.cpp", "w") as file:
+        file.write(
+            """\
 #include <Arduino.h>
 #include <rusty_keypad.h>
 
@@ -33,4 +36,4 @@ void loop() {
   // put your main code here, to run repeatedly:
 }
 """
-    )
+        )
