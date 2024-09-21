@@ -94,6 +94,17 @@ bool RustyKeypad::checkKey(RustyKey *key)
     case KeypadEventTypes::RKP_CLEAR_SCREEN:
         clearScreen();
         break;
+    case KeypadEventTypes::RKP_PRESS_ENTER:
+        setWaitKey(key);
+        if (onEnterListener != NULL)
+        {
+            onEnterListener(getKeypadData());
+        }
+        break;
+    case KeypadEventTypes::RKP_RELEASE_ENTER:
+        resetWaitKey();
+        clearScreen();
+        break;
     default:
         break;
     }

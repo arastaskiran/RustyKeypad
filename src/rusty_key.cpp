@@ -62,7 +62,15 @@ bool RustyKey::checkTimeout()
             return true;
         }
     }
-    if (RustyKeypad::getType() == RKP_T9)
+    else if (RustyKeypad::isEnterKey(getFirstKeyCode()))
+    {
+        if (isOverT9Duration())
+        {
+            setEvent(RKP_PRESS_ENTER);
+            return true;
+        }
+    }
+    else if (RustyKeypad::getType() == RKP_T9)
     {
         if (isOverT9Duration())
         {
@@ -72,12 +80,12 @@ bool RustyKey::checkTimeout()
         }
         return false;
     }
-
-    if (isOverKeyDownDuration())
+    else if (isOverKeyDownDuration())
     {
         setEvent(RKP_KEY_UP);
         return true;
     }
+
     return false;
 }
 
@@ -108,12 +116,17 @@ void RustyKey::analyzeState()
         setEvent(RKP_RELEASE_DELETE);
         return;
     }
-    if (RustyKeypad::getType() == RKP_T9)
+    else if (isEventEnterRelation())
+    {
+        setEvent(RKP_RELEASE_ENTER);
+        return;
+    }
+    else if (RustyKeypad::getType() == RKP_T9)
     {
         setEvent(RKP_KEY_UP);
         return;
     }
-    if (isOverLongPressDuration())
+    else if (isOverLongPressDuration())
     {
         setEvent(RKP_LONG_PRESS);
         return;
@@ -189,8 +202,7 @@ char RustyKey::getFirstKeyCode() const
 }
 
 void RustyKey::setEvent(KeypadEventTypes e)
-{
-
+{   
     current_event = e;
     resetActivityTimer();
 }
@@ -217,6 +229,11 @@ bool RustyKey::isEventDeleteRelation()
     return (isEvent(RKP_PRESS_DELETE) || isEvent(RKP_CLEAR_SCREEN));
 }
 
+bool RustyKey::isEventEnterRelation()
+{
+    return (isEvent(RKP_PRESS_ENTER) || isEvent(RKP_RELEASE_ENTER));
+}
+
 bool RustyKey::isEvent(KeypadEventTypes e)
 {
     return e == current_event;
@@ -235,7 +252,15 @@ bool RustyKey::analyzeSameState(bool new_state)
             }
             return false;
         }
-        if (current_event == RKP_KEY_UP)
+        else if (isEventEnterRelation())
+        {
+            if (!new_state)
+            {
+                setEvent(RKP_KEY_IDLE);
+            }
+            return !new_state;
+        }
+        else if (current_event == RKP_KEY_UP)
         {
             char_index = 0;
             setEvent(RKP_KEY_DOWN);

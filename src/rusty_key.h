@@ -62,7 +62,14 @@ typedef enum KeypadEventTypes
     RKP_RELEASE_DELETE,
 
     /** Clears the screen, for example, when a specific key combination is pressed. */
-    RKP_CLEAR_SCREEN
+    RKP_CLEAR_SCREEN,
+
+    /** The enter key press event. */
+    RKP_PRESS_ENTER,
+
+    /** The enter key release event. */
+    RKP_RELEASE_ENTER,
+
 } KeypadEventTypes;
 
 class RustyKey
@@ -405,6 +412,17 @@ private:
      * @return true if the current event is related to a delete action, otherwise false.
      */
     bool isEventDeleteRelation();
+
+    /**
+     * @brief Checks if the current event is related to the enter key.
+     *
+     * This function determines whether the current event is associated with the enter key.
+     * It can be used to verify if the event being handled is triggered by pressing or interacting
+     * with the enter key.
+     *
+     * @return `true` if the current event is related to the enter key, `false` otherwise.
+     */
+    bool isEventEnterRelation();
 
     /**
      * @brief Compares the specified event with the current event.

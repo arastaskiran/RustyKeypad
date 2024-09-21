@@ -307,24 +307,24 @@ public:
     static void addTextChangeListener(void (*listener)(String));
 
     /**
-     * @brief Registers a listener for the Enter key action.
+     * @brief Registers a listener for the enter key press event.
      *
      * This static function allows you to register a callback function that will be triggered
-     * when the Enter key is pressed. The callback function should accept a `char` parameter
-     * representing the character associated with the Enter action.
+     * when the enter key is pressed. The callback function should accept a `String` parameter
+     * representing the data or text entered before the enter key was pressed.
      *
-     * @param listener A pointer to the function that will handle the Enter key action.
-     *                 The function must take a `char` argument representing the Enter key.
+     * @param listener  A pointer to the function that will handle the enter key press event.
+     *                  The function must take a `String` argument representing the data entered.
      *
      * @example
-     * void onEnterPressed(char key) {
-     *     // Handle the Enter key press
-     *     Serial.println(key);
+     * void onEnterPress(String data) {
+     *     // Handle enter key press event
+     *     Serial.println(data);
      * }
      *
-     * addEnterActionListener(onEnterPressed);
+     * addEnterActionListener(onEnterPress);
      */
-    static void addEnterActionListener(void (*listener)(char));
+    static void addEnterActionListener(void (*listener)(String));
 
     /**
      * @brief Registers a listener for the Delete key action.
@@ -407,6 +407,36 @@ public:
     static bool isDeleteKey(char key);
 
     /**
+     * @brief Checks if the given key is assigned as the enter key.
+     *
+     * This static function verifies whether the specified key matches the assigned
+     * enter key. It returns true if the key is the designated enter key, and false
+     * otherwise.
+     *
+     * @param key The character to check against the enter key.
+     * @return true If the provided key is the enter key; false otherwise.
+     *
+     * @note This function can be useful for determining if a specific key press
+     * corresponds to the enter key within the keypad logic.
+     */
+    static bool isEnterKey(char key);
+
+    /**
+     * @brief Assigns a specific key as the enter key.
+     *
+     * This static function allows you to designate a specific key as the enter key
+     * for the keypad. If the provided key represents multiple characters, only the
+     * first character will be set as the enter key. This updates the `enter_key`
+     * variable and sets `has_enter_key` to true.
+     *
+     * @param key The character representing the key to be assigned as the enter key.
+     *
+     * @note Ensure that the provided key is valid and corresponds to an actual key
+     * on the keypad.
+     */
+    static void setEnterKey(char key);
+
+    /**
      * @brief Assigns a key to be used as the delete key on the keyboard.
      *
      * This function designates a specific key to act as the delete key. Since each key
@@ -426,6 +456,18 @@ public:
      * act as the delete key until a new one is assigned.
      */
     static void ignoreDeleteKey();
+
+    /**
+     * @brief Disables the enter key functionality.
+     *
+     * This static function deactivates the functionality of the assigned enter key,
+     * effectively ignoring any actions associated with it. After calling this function,
+     * the enter key will no longer trigger its intended behavior until re-enabled.
+     *
+     * @note This function is useful in scenarios where you want to temporarily
+     * disable the enter key, for example, during specific input modes or processes.
+     */
+    static void ignoreEnterKey();
 
     /**
      * @brief Returns the current text entered on the keypad.
@@ -460,6 +502,20 @@ public:
      * @return true if password masking is enabled, otherwise false.
      */
     static bool hasPasswordMask();
+
+    /**
+     * @brief Checks if an enter key has been assigned.
+     *
+     * This static function returns a boolean indicating whether a specific key
+     * has been designated as the enter key. It returns true if an enter key is
+     * assigned and false otherwise.
+     *
+     * @return true If an enter key has been assigned; false if not.
+     *
+     * @note This function can be useful for determining if the keypad is configured
+     * to recognize an enter key, affecting how key presses are handled.
+     */
+    static bool hasEnterKey();
 
     /**
      * @brief Sets the password masking state for keypad input.
@@ -600,15 +656,24 @@ protected:
     static void (*textChangeListener)(String);
 
     /**
-     * @brief Pointer to the function handling the Enter key action.
+     * @brief Pointer to the function handling the enter key event.
      *
-     * This static variable holds a pointer to a function that will be called when the Enter key is pressed.
-     * The function should accept a `char` parameter representing the character associated with the Enter action.
+     * This static variable holds a pointer to a function that will be called when
+     * the enter key is pressed. The function should accept a `String` parameter
+     * representing the data or text entered before the enter key was pressed.
      *
-     * @note This function pointer is used by the `addEnterActionListener` method to register an Enter key
-     * action handler.
+     * @note This function pointer is used by the `addEnterActionListener` method
+     * to register a callback that responds to the enter key event.
+     *
+     * @example
+     * void onEnterPress(String data) {
+     *     // Handle the enter key press event
+     *     Serial.println(data);
+     * }
+     *
+     * addEnterActionListener(onEnterPress);
      */
-    static void (*onEnterListener)(char);
+    static void (*onEnterListener)(String);
 
     /**
      * @brief Pointer to the function handling the Delete key action.
@@ -905,5 +970,29 @@ private:
      * @note This is useful when implementing secure input for passwords or PINs.
      */
     static bool use_password_mask;
+
+    /**
+     * @brief Indicates whether an enter key has been assigned.
+     *
+     * This static variable holds a boolean value that signifies if an enter key has
+     * been set. If true, it means a specific key has been designated as the enter key.
+     * If false, no enter key has been assigned.
+     *
+     * @note This variable can be used in conjunction with the `setEnterKey` function
+     * to check the status of the enter key assignment.
+     */
+    static bool has_enter_key;
+
+    /**
+     * @brief Represents the designated enter key.
+     *
+     * This static variable holds the character associated with the enter key. You can assign
+     * a specific key as the enter key, and if that key represents multiple characters,
+     * only the first character will be stored in this variable.
+     *
+     * @note Make sure to set this variable using the `setEnterKey` function to ensure
+     * that it accurately reflects the intended enter key.
+     */
+    static char enter_key;
 };
 #endif

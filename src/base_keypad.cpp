@@ -8,10 +8,12 @@ uint8_t BaseRustyKeypad::max_text_length{20};
 unsigned int BaseRustyKeypad::keypad_data_cursor{0};
 char BaseRustyKeypad::float_char{'*'};
 char BaseRustyKeypad::delete_key{'*'};
+char BaseRustyKeypad::enter_key{'#'};
 KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::RKP_INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
 bool BaseRustyKeypad::has_delete_key{true};
+bool BaseRustyKeypad::has_enter_key{false};
 bool BaseRustyKeypad::use_stored_text{true};
 bool BaseRustyKeypad::use_password_mask{false};
 const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
@@ -34,7 +36,7 @@ void (*BaseRustyKeypad::keyDownListener)(char){0};
 
 void (*BaseRustyKeypad::keyUpListener)(char){0};
 void (*BaseRustyKeypad::longPressListener)(char){0};
-void (*BaseRustyKeypad::onEnterListener)(char){0};
+void (*BaseRustyKeypad::onEnterListener)(String){0};
 void (*BaseRustyKeypad::onDeleteListener)(char){0};
 void (*BaseRustyKeypad::multipleKeyListener)(String){0};
 void (*BaseRustyKeypad::textChangeListener)(String){0};
@@ -185,7 +187,7 @@ void BaseRustyKeypad::addLongPressListener(void (*listener)(char))
     longPressListener = listener;
 }
 
-void BaseRustyKeypad::addEnterActionListener(void (*listener)(char))
+void BaseRustyKeypad::addEnterActionListener(void (*listener)(String))
 {
     onEnterListener = listener;
 }
@@ -289,7 +291,7 @@ String BaseRustyKeypad::getKeypadData()
     }
 
     String asterisks = "";
-    for (int i = 0; i < keypad_data.length(); i++)
+    for (size_t i = 0; i < keypad_data.length(); i++)
     {
         asterisks += '*';
     }
@@ -309,4 +311,27 @@ bool BaseRustyKeypad::hasPasswordMask()
 void BaseRustyKeypad::setPasswordMask(bool state)
 {
     use_password_mask = state;
+}
+
+void BaseRustyKeypad::setEnterKey(char key)
+{
+    enter_key = key;
+    has_enter_key = true;
+}
+
+bool BaseRustyKeypad::isEnterKey(char key)
+{
+    if (!has_enter_key)
+        return false;
+    return key == enter_key;
+}
+
+bool BaseRustyKeypad::hasEnterKey()
+{
+    return has_enter_key;
+}
+
+void BaseRustyKeypad::ignoreEnterKey()
+{
+    has_enter_key = false;
 }
