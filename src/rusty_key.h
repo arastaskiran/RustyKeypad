@@ -370,7 +370,18 @@ private:
      *
      * @return bool `true` if the key press duration exceeds the RKP_KEY_DOWN threshold, `false` otherwise.
      */
-    bool isOverKeydownDuration();
+    bool isOverKeyDownDuration();
+
+    /**
+     * @brief Checks if the key press duration has exceeded the long press threshold.
+     *
+     * This function determines whether the duration for which a key has been held down
+     * has surpassed the predefined threshold for a long press action. If the duration
+     * exceeds the threshold, it returns true, indicating a long press.
+     *
+     * @return true if the key press duration exceeds the long press threshold, otherwise false.
+     */
+    bool isOverLongPressDuration();
 
     /**
      * @brief Analyzes and handles button actions based on the current and new states.
@@ -384,5 +395,26 @@ private:
      * @return A boolean value indicating if the state has changed or if an action needs to be performed.
      */
     bool analyzeSameState(bool new_state);
+
+    /**
+     * @brief Checks if the current event is related to a delete action.
+     *
+     * This function determines whether the current keypad event is associated with
+     * a delete action, such as pressing or releasing the delete key.
+     *
+     * @return true if the current event is related to a delete action, otherwise false.
+     */
+    bool isEventDeleteRelation();
+
+    /**
+     * @brief Compares the specified event with the current event.
+     *
+     * This function checks whether the provided keypad event type `e` matches the current event
+     * being processed. It helps to determine if a specific event is occurring.
+     *
+     * @param e The event type to compare with the current event.
+     * @return true if the specified event matches the current event, otherwise false.
+     */
+    bool isEvent(KeypadEventTypes e);
 };
 #endif

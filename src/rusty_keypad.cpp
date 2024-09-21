@@ -91,6 +91,9 @@ bool RustyKeypad::checkKey(RustyKey *key)
     case KeypadEventTypes::RKP_RELEASE_DELETE:
         resetWaitKey();
         break;
+    case KeypadEventTypes::RKP_CLEAR_SCREEN:
+        clearScreen();
+        break;
     default:
         break;
     }

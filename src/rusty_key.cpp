@@ -73,7 +73,7 @@ bool RustyKey::checkTimeout()
         return false;
     }
 
-    if (isOverKeydownDuration())
+    if (isOverKeyDownDuration())
     {
         setEvent(RKP_KEY_UP);
         return true;
@@ -86,9 +86,14 @@ bool RustyKey::isOverT9Duration()
     return ((millis() - last_activity_ts) > RustyKeypad::t9_duration);
 }
 
-bool RustyKey::isOverKeydownDuration()
+bool RustyKey::isOverKeyDownDuration()
 {
     return ((millis() - last_activity_ts) > RustyKeypad::keydown_timeout);
+}
+
+bool RustyKey::isOverLongPressDuration()
+{
+    return ((millis() - last_activity_ts) > RustyKeypad::long_press_duration);
 }
 
 bool RustyKey::isPressed()
@@ -98,7 +103,7 @@ bool RustyKey::isPressed()
 
 void RustyKey::analyzeState()
 {
-    if (getCurrentEvent() == RKP_PRESS_DELETE)
+    if (isEventDeleteRelation())
     {
         setEvent(RKP_RELEASE_DELETE);
         return;
@@ -108,7 +113,7 @@ void RustyKey::analyzeState()
         setEvent(RKP_KEY_UP);
         return;
     }
-    if ((millis() - last_activity_ts) > RustyKeypad::long_press_duration)
+    if (isOverLongPressDuration())
     {
         setEvent(RKP_LONG_PRESS);
         return;
@@ -207,12 +212,27 @@ bool RustyKey::isEqual(const RustyKey *key)
     return getFirstKeyCode() == key->getFirstKeyCode();
 }
 
+bool RustyKey::isEventDeleteRelation()
+{
+    return (isEvent(RKP_PRESS_DELETE) || isEvent(RKP_CLEAR_SCREEN));
+}
+
+bool RustyKey::isEvent(KeypadEventTypes e)
+{
+    return e == current_event;
+}
+
 bool RustyKey::analyzeSameState(bool new_state)
 {
     if (new_state && current_event != RKP_WAIT)
     {
-        if (current_event == RKP_PRESS_DELETE)
+        if (isEventDeleteRelation())
         {
+            if (isOverLongPressDuration() && !isEvent(RKP_CLEAR_SCREEN))
+            {
+                setEvent(RKP_CLEAR_SCREEN);
+                return true;
+            }
             return false;
         }
         if (current_event == RKP_KEY_UP)

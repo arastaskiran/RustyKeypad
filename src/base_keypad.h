@@ -427,6 +427,51 @@ public:
      */
     static void ignoreDeleteKey();
 
+    /**
+     * @brief Returns the current text entered on the keypad.
+     *
+     * This static function retrieves the current string of characters entered on the keypad.
+     * If the password mask is active, the string is returned with masked characters (e.g., '*')
+     * instead of the actual input to protect sensitive information.
+     *
+     * @return A `String` representing the current keypad input. If the password mask is active,
+     *         the string is returned with '*' characters.
+     */
+    static String getKeypadData();
+
+    /**
+     * @brief Compares the current keypad input with a specified string.
+     *
+     * This static function allows you to compare the text entered on the keypad with a given reference string.
+     * It can be used, for example, to check if the entered text matches a password or other reference value.
+     *
+     * @param text The `String` to compare with the current keypad input.
+     * @return true if the entered keypad input matches the provided text, otherwise false.
+     */
+    static bool isKeypadEqual(String text);
+
+    /**
+     * @brief Checks if password masking is enabled.
+     *
+     * This static function returns whether password masking is currently enabled for keypad input.
+     * When password masking is enabled, characters entered on the keypad will be displayed as '*'
+     * instead of the actual characters to protect sensitive information.
+     *
+     * @return true if password masking is enabled, otherwise false.
+     */
+    static bool hasPasswordMask();
+
+    /**
+     * @brief Sets the password masking state for keypad input.
+     *
+     * This static function allows you to enable or disable password masking for characters entered
+     * on the keypad. When enabled, the characters will be masked (e.g., displayed as '*' characters)
+     * to protect sensitive information such as passwords.
+     *
+     * @param state A boolean value where `true` enables password masking and `false` disables it.
+     */
+    static void setPasswordMask(bool state);
+
 protected:
     /**
      * @brief Configures the keypad with factory default settings.
@@ -849,5 +894,16 @@ private:
      * The stored text is limited to the number of characters defined by `max_text_length`.
      */
     static bool use_stored_text;
+
+    /**
+     * @brief Enables or disables password masking for keypad input.
+     *
+     * This static boolean variable controls whether the characters entered on the keypad are masked
+     * (e.g., shown as '*' characters) to hide sensitive information such as passwords. When enabled,
+     * the entered text will not be displayed directly, but as masked characters.
+     *
+     * @note This is useful when implementing secure input for passwords or PINs.
+     */
+    static bool use_password_mask;
 };
 #endif

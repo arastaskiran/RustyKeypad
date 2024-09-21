@@ -13,6 +13,7 @@ bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
 bool BaseRustyKeypad::has_delete_key{true};
 bool BaseRustyKeypad::use_stored_text{true};
+bool BaseRustyKeypad::use_password_mask{false};
 const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
     {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
     {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
@@ -82,6 +83,10 @@ void BaseRustyKeypad::clearScreen()
 {
     keypad_data = "";
     keypad_data_cursor = 0;
+    if (textChangeListener != NULL)
+    {
+        textChangeListener(getKeypadData());
+    }
 }
 
 void BaseRustyKeypad::enable()
@@ -117,7 +122,7 @@ void BaseRustyKeypad::appendKey(char key)
     keypad_data_cursor++;
     if (textChangeListener != NULL)
     {
-        textChangeListener(keypad_data);
+        textChangeListener(getKeypadData());
     }
 }
 
@@ -139,7 +144,7 @@ void BaseRustyKeypad::deleteChar()
     keypad_data_cursor--;
     if (textChangeListener != NULL)
     {
-        textChangeListener(keypad_data);
+        textChangeListener(getKeypadData());
     }
 }
 
@@ -274,4 +279,34 @@ void BaseRustyKeypad::setStoredText(bool state)
 void BaseRustyKeypad::setMaxTextLength(uint8_t len)
 {
     max_text_length = len;
+}
+
+String BaseRustyKeypad::getKeypadData()
+{
+    if (!use_password_mask || keypad_data.length() == 0)
+    {
+        return keypad_data;
+    }
+
+    String asterisks = "";
+    for (int i = 0; i < keypad_data.length(); i++)
+    {
+        asterisks += '*';
+    }
+    return asterisks;
+}
+
+bool BaseRustyKeypad::isKeypadEqual(String text)
+{
+    return keypad_data == text;
+}
+
+bool BaseRustyKeypad::hasPasswordMask()
+{
+    return use_password_mask;
+}
+
+void BaseRustyKeypad::setPasswordMask(bool state)
+{
+    use_password_mask = state;
 }
