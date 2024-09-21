@@ -70,6 +70,9 @@ typedef enum KeypadEventTypes
     /** The enter key release event. */
     RKP_RELEASE_ENTER,
 
+    /** Indicates the transition to the next character in T9 mode. */
+    RKP_T9_NEXT_CHAR
+
 } KeypadEventTypes;
 
 class RustyKey
@@ -434,5 +437,7 @@ private:
      * @return true if the specified event matches the current event, otherwise false.
      */
     bool isEvent(KeypadEventTypes e);
+
+
 };
 #endif

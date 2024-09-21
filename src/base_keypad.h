@@ -573,6 +573,16 @@ public:
      */
     static bool beepBuzzer(uint8_t count, unsigned long beep_duration = 0UL);
 
+    /**
+     * @brief Checks if the key is a special key.
+     *
+     * This function determines whether the key has special functions, such as
+     * delete or enter, which perform specific actions beyond regular key input.
+     *
+     * @return true if the key is a special key; otherwise, false.
+     */
+    static bool isSpecialKey(char key);
+
 protected:
     /**
      * @brief Configures the keypad with factory default settings.

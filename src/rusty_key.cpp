@@ -39,6 +39,11 @@ bool RustyKey::check()
         return true;
     }
     char_index = 0;
+    if (RustyKeypad::getType() == RKP_T9 && !RustyKeypad::isSpecialKey(getFirstKeyCode()))
+    {
+        setEvent(RKP_T9_NEXT_CHAR);
+        return true;
+    }
     setEvent(RKP_KEY_DOWN);
     return true;
 }
@@ -75,7 +80,7 @@ bool RustyKey::checkTimeout()
         if (isOverT9Duration())
         {
             nextCharIndex();
-            setEvent(RKP_KEY_DOWN);
+            setEvent(RKP_T9_NEXT_CHAR);
             return true;
         }
         return false;
@@ -202,7 +207,7 @@ char RustyKey::getFirstKeyCode() const
 }
 
 void RustyKey::setEvent(KeypadEventTypes e)
-{   
+{
     current_event = e;
     resetActivityTimer();
 }
@@ -259,6 +264,11 @@ bool RustyKey::analyzeSameState(bool new_state)
                 setEvent(RKP_KEY_IDLE);
             }
             return !new_state;
+        }
+        else if (isEvent(RKP_T9_NEXT_CHAR))
+        {
+            setEvent(RKP_KEY_DOWN);
+            return true;
         }
         else if (current_event == RKP_KEY_UP)
         {

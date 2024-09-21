@@ -368,7 +368,7 @@ void BaseRustyKeypad::setBuzzerState(bool state)
         return;
     }
 
-    digitalWrite(buzzer_pin, (state ? HIGH : LOW));   
+    digitalWrite(buzzer_pin, (state ? HIGH : LOW));
     buzzer_state = state;
     last_buzzer_activate_ts = millis();
     if (!state && buzzer_beep_count > 0)
@@ -417,4 +417,9 @@ void BaseRustyKeypad::checkBuzzer()
     {
         setBuzzerState(!buzzer_state);
     }
+}
+
+bool BaseRustyKeypad::isSpecialKey(char key)
+{
+    return isDeleteKey(key) || isEnterKey(key);
 }

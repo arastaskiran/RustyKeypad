@@ -65,6 +65,9 @@ bool RustyKeypad::checkKey(RustyKey *key)
         }
         beepBuzzer(1);
         break;
+    case KeypadEventTypes::RKP_T9_NEXT_CHAR:
+        textChangeListener(getKeypadData() + String(key->getKeyCode()));
+        break;
     case KeypadEventTypes::RKP_KEY_UP:
         appendKey(key->getKeyCode());
         if (keyUpListener != NULL)
