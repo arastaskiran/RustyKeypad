@@ -12,6 +12,7 @@ KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
 bool BaseRustyKeypad::has_delete_key{true};
+bool BaseRustyKeypad::use_stored_text{true};
 const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
     {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
     {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
@@ -104,7 +105,7 @@ void BaseRustyKeypad::disable()
 
 void BaseRustyKeypad::appendKey(char key)
 {
-    if (keypad_data.length() >= max_text_length)
+    if (keypad_data.length() >= max_text_length || !use_stored_text)
     {
         return;
     }
@@ -122,7 +123,7 @@ void BaseRustyKeypad::appendKey(char key)
 
 void BaseRustyKeypad::deleteChar()
 {
-    if (keypad_data.length() == 0)
+    if (keypad_data.length() == 0 || !use_stored_text)
     {
         return;
     }
@@ -263,4 +264,14 @@ void BaseRustyKeypad::useDeleteKey(char key)
 bool BaseRustyKeypad::hasDeleteKey()
 {
     return has_delete_key;
+}
+
+void BaseRustyKeypad::setStoredText(bool state)
+{
+    use_stored_text = state;
+}
+
+void BaseRustyKeypad::setMaxTextLength(uint8_t len)
+{
+    max_text_length = len;
 }

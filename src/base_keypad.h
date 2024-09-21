@@ -180,6 +180,27 @@ public:
     static void disable();
 
     /**
+     * @brief Sets the state for using stored text from key presses.
+     *
+     * This static function allows you to enable or disable the storage of characters pressed on the keyboard
+     * in a `String` variable. When enabled, the input will be recorded up to the limit defined by
+     * `max_text_length`.
+     *
+     * @param state A boolean value indicating whether to use stored text (true) or not (false).
+     */
+    static void setStoredText(bool state);
+
+    /**
+     * @brief Sets the maximum length for the stored text.
+     *
+     * This static function allows you to define the maximum number of characters that can be stored
+     * when using the stored text feature. The length is specified by the `len` parameter.
+     *
+     * @param len The maximum number of characters to allow for stored text. Should be a value greater than 0.
+     */
+    static void setMaxTextLength(uint8_t len);
+
+    /**
      * @brief Specifies the mode for keypad pins.
      *
      * This static variable defines the input mode for the keypad's row and column pins. It can be set to either
@@ -862,5 +883,16 @@ private:
      * helps to ensure that the text input remains manageable and avoids buffer overflow.
      */
     static uint8_t max_text_length;
+
+    /**
+     * @brief Indicates whether to use the stored text from key presses.
+     *
+     * This static variable holds a boolean value that determines if the characters pressed on the keyboard
+     * should be stored in a `String` variable. This functionality can simplify operations by maintaining a
+     * record of the input.
+     *
+     * The stored text is limited to the number of characters defined by `max_text_length`.
+     */
+    static bool use_stored_text;
 };
 #endif
