@@ -248,39 +248,45 @@ bool RustyKey::analyzeSameState(bool new_state)
 {
     if (new_state && current_event != RKP_WAIT)
     {
-        if (isEventDeleteRelation())
-        {
-            if (isOverLongPressDuration() && !isEvent(RKP_CLEAR_SCREEN))
-            {
-                setEvent(RKP_CLEAR_SCREEN);
-                return true;
-            }
-            return false;
-        }
-        else if (isEventEnterRelation())
-        {
-            if (!new_state)
-            {
-                setEvent(RKP_KEY_IDLE);
-            }
-            return !new_state;
-        }
-        else if (isEvent(RKP_T9_NEXT_CHAR))
-        {
-            setEvent(RKP_KEY_DOWN);
-            return true;
-        }
-        else if (current_event == RKP_KEY_UP)
-        {
-            char_index = 0;
-            setEvent(RKP_KEY_DOWN);
-            return true;
-        }
-        setEvent(RKP_WAIT);
+        return fixCurrentState(new_state);
     }
     else if (!new_state && current_event != RKP_KEY_IDLE)
     {
         setEvent(RKP_KEY_IDLE);
     }
+    return !current_state ? false : checkTimeout();
+}
+
+bool RustyKey::fixCurrentState(bool new_state)
+{
+    if (isEventDeleteRelation())
+    {
+        if (isOverLongPressDuration() && !isEvent(RKP_CLEAR_SCREEN))
+        {
+            setEvent(RKP_CLEAR_SCREEN);
+            return true;
+        }
+        return false;
+    }
+    else if (isEventEnterRelation())
+    {
+        if (!new_state)
+        {
+            setEvent(RKP_KEY_IDLE);
+        }
+        return !new_state;
+    }
+    else if (isEvent(RKP_T9_NEXT_CHAR))
+    {
+        setEvent(RKP_KEY_DOWN);
+        return true;
+    }
+    else if (current_event == RKP_KEY_UP)
+    {
+        char_index = 0;
+        setEvent(RKP_KEY_DOWN);
+        return true;
+    }
+    setEvent(RKP_WAIT);
     return !current_state ? false : checkTimeout();
 }

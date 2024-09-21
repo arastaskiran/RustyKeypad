@@ -438,6 +438,16 @@ private:
      */
     bool isEvent(KeypadEventTypes e);
 
-
+    /**
+     * @brief Fixes the current state based on the new state.
+     *
+     * This function manages the state transitions for events that may have multiple phases.
+     * It adjusts the current state according to the specified new state, ensuring
+     * proper handling of complex event sequences.
+     *
+     * @param new_state The new state to be set for the current event.
+     * @return true if the state was successfully fixed; otherwise, false.
+     */
+    bool fixCurrentState(bool new_state);
 };
 #endif
