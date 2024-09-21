@@ -5,6 +5,8 @@ uint8_t BaseRustyKeypad::pins_mode{INPUT_PULLUP};
 uint8_t BaseRustyKeypad::row_size{4};
 uint8_t BaseRustyKeypad::col_size{3};
 uint8_t BaseRustyKeypad::max_text_length{20};
+uint8_t BaseRustyKeypad::buzzer_pin{0};
+uint8_t BaseRustyKeypad::buzzer_beep_count{0};
 unsigned int BaseRustyKeypad::keypad_data_cursor{0};
 char BaseRustyKeypad::float_char{'*'};
 char BaseRustyKeypad::delete_key{'*'};
@@ -16,6 +18,8 @@ bool BaseRustyKeypad::has_delete_key{true};
 bool BaseRustyKeypad::has_enter_key{false};
 bool BaseRustyKeypad::use_stored_text{true};
 bool BaseRustyKeypad::use_password_mask{false};
+bool BaseRustyKeypad::use_buzzer{false};
+bool BaseRustyKeypad::buzzer_state{false};
 const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
     {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
     {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
@@ -30,6 +34,8 @@ unsigned long BaseRustyKeypad::long_press_duration{5000};
 unsigned long BaseRustyKeypad::idle_timeout{30000};
 unsigned long BaseRustyKeypad::last_activity_ts{0};
 unsigned long BaseRustyKeypad::t9_duration{600};
+unsigned long BaseRustyKeypad::last_buzzer_activate_ts{0};
+unsigned long BaseRustyKeypad::buzzer_beep_duration{50};
 RustyKeyList *BaseRustyKeypad::KeyList{nullptr};
 uint8_t *BaseRustyKeypad::row_out_pins{nullptr};
 void (*BaseRustyKeypad::keyDownListener)(char){0};
@@ -80,6 +86,7 @@ void BaseRustyKeypad::reset()
     clearScreen();
     interrupted = true;
     waitKey = nullptr;
+    setBuzzerState(false);
 }
 void BaseRustyKeypad::clearScreen()
 {
@@ -334,4 +341,80 @@ bool BaseRustyKeypad::hasEnterKey()
 void BaseRustyKeypad::ignoreEnterKey()
 {
     has_enter_key = false;
+}
+
+void BaseRustyKeypad::enableBuzzer(uint8_t pin, unsigned long beep_duration)
+{
+    buzzer_pin = pin;
+    pinMode(buzzer_pin, OUTPUT);
+    use_buzzer = true;
+    setBuzzerState(false);
+    buzzer_beep_duration = beep_duration;
+}
+
+void BaseRustyKeypad::disableBuzzer()
+{
+    if (buzzer_state)
+    {
+        setBuzzerState(false);
+    }
+    use_buzzer = false;
+}
+
+void BaseRustyKeypad::setBuzzerState(bool state)
+{
+    if (!use_buzzer)
+    {
+        return;
+    }
+
+    digitalWrite(buzzer_pin, (state ? HIGH : LOW));   
+    buzzer_state = state;
+    last_buzzer_activate_ts = millis();
+    if (!state && buzzer_beep_count > 0)
+    {
+        buzzer_beep_count--;
+    }
+}
+
+bool BaseRustyKeypad::isBeepDurationOver()
+{
+    return ((millis() - last_buzzer_activate_ts) > buzzer_beep_duration);
+}
+
+bool BaseRustyKeypad::beepBuzzer(uint8_t count, unsigned long beep_duration)
+{
+    if (!enabled || !use_buzzer || buzzer_beep_count > 0)
+    {
+        return false;
+    }
+    if (count == 0)
+    {
+        setBuzzerState(false);
+        buzzer_beep_count = 0;
+        return true;
+    }
+    if (beep_duration > 0)
+    {
+        buzzer_beep_duration = beep_duration;
+    }
+    buzzer_beep_count = count;
+    return true;
+}
+
+void BaseRustyKeypad::checkBuzzer()
+{
+    if (!enabled || !use_buzzer || (buzzer_beep_count == 0 && !buzzer_state))
+    {
+        return;
+    }
+    if (buzzer_beep_count == 0)
+    {
+        setBuzzerState(false);
+        return;
+    }
+    if (isBeepDurationOver())
+    {
+        setBuzzerState(!buzzer_state);
+    }
 }

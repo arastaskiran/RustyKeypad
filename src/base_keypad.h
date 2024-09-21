@@ -528,6 +528,51 @@ public:
      */
     static void setPasswordMask(bool state);
 
+    /**
+     * @brief Enables the buzzer on the specified pin with a default beep duration.
+     *
+     * This static function configures the buzzer to operate on a given GPIO pin. It activates the buzzer
+     * and sets the duration for which it will sound. The default beep duration is set to 50 milliseconds,
+     * but it can be overridden by providing a different value.
+     *
+     * @param pin The GPIO pin number where the buzzer is connected.
+     * @param beep_duration The duration (in milliseconds) for which the buzzer should sound.
+     *                      Default is 50 ms if not specified.
+     *
+     * @note Ensure the specified pin is correctly initialized as an output before calling this function.
+     */
+    static void enableBuzzer(uint8_t pin, unsigned long beep_duration = 50);
+
+    /**
+     * @brief Disables the buzzer.
+     *
+     * This static function turns off the buzzer if it is currently active. It stops any ongoing sound
+     * and sets the buzzer state to inactive. This is useful for managing the buzzer's operation
+     * based on specific events or conditions within the system.
+     *
+     * @note Ensure that this function is called when the buzzer is no longer needed to avoid
+     * unnecessary power consumption or unwanted sound.
+     */
+    static void disableBuzzer();
+
+    /**
+     * @brief Beeps the buzzer a specified number of times.
+     *
+     * This static function activates the buzzer for a given number of beeps. If the specified
+     * `beep_duration` is zero, it uses the previously set duration. If a new count is provided,
+     * it overrides the previous beep count. The function returns `false` if the buzzer is currently
+     * busy and cannot perform the operation; otherwise, it returns `true`.
+     *
+     * @param count The number of times to beep the buzzer.
+     * @param beep_duration The duration for each beep in milliseconds. If set to zero, the last
+     *                      used duration is applied.
+     *
+     * @return A boolean value:
+     *         - `true` if the operation was successful and the buzzer is now beeping,
+     *         - `false` if the buzzer was busy and the operation could not be performed.
+     */
+    static bool beepBuzzer(uint8_t count, unsigned long beep_duration = 0UL);
+
 protected:
     /**
      * @brief Configures the keypad with factory default settings.
@@ -786,6 +831,34 @@ protected:
      */
     static void deleteChar();
 
+    /**
+     * @brief Sets the state of the buzzer.
+     *
+     * This static function allows you to enable or disable the buzzer by changing its state.
+     * When `state` is set to `true`, the buzzer will be activated, and when set to `false`,
+     * the buzzer will be turned off.
+     *
+     * @param state A boolean value indicating the desired state of the buzzer.
+     *              - `true` to activate the buzzer
+     *              - `false` to deactivate the buzzer
+     *
+     * @note Ensure that the buzzer pin is properly configured before calling this function.
+     */
+    static void setBuzzerState(bool state);
+
+    /**
+     * @brief Manages the buzzer state and behavior.
+     *
+     * This static function is responsible for checking the current state of the buzzer
+     * and managing its activation and deactivation based on the set conditions.
+     * It handles the timing for beeping, including checking if the beep duration has
+     * expired and whether to silence the buzzer if the beep count has reached zero.
+     *
+     * @note This method should be called regularly within the main loop to ensure
+     * that the buzzer operates as expected.
+     */
+    static void checkBuzzer();
+
 private:
     /**
      * @brief Stores the number of rows in the keypad matrix.
@@ -994,5 +1067,93 @@ private:
      * that it accurately reflects the intended enter key.
      */
     static char enter_key;
+
+    /**
+     * @brief Static variable representing the pin connected to the buzzer.
+     *
+     * This static variable holds the GPIO pin number that is assigned to control the buzzer.
+     * Being static, it is shared across all instances of the class, meaning it doesn't belong to
+     * any specific instance of the class but to the class itself.
+     *
+     * The pin number should be set using the appropriate method before any operations involving the buzzer.
+     *
+     * @note The pin must be correctly initialized and configured for output to properly control the buzzer.
+     */
+    static uint8_t buzzer_pin;
+
+    /**
+     * @brief Static flag to enable or disable the buzzer functionality.
+     *
+     * This static boolean variable determines whether the buzzer feature is active or not.
+     * When set to `true`, the system will allow the use of the buzzer to provide audible feedback.
+     * When set to `false`, the buzzer will be disabled, and no sound will be triggered.
+     *
+     * This variable is shared across all instances of the class and controls the global behavior
+     * of the buzzer.
+     *
+     * @note Ensure the `buzzer_pin` is properly set before enabling this feature.
+     */
+    static bool use_buzzer;
+
+    /**
+     * @brief Static variable to indicate the current state of the buzzer.
+     *
+     * This static boolean variable shows whether the buzzer is currently sounding (true) or silent (false).
+     * It is used to track if the buzzer is active or inactive at any given moment.
+     *
+     * This variable helps manage the buzzer's operation within the system and can be used
+     * to ensure that the buzzer is only activated when necessary.
+     */
+    static bool buzzer_state;
+
+    /**
+     * @brief Static variable to store the timestamp of the last buzzer activation.
+     *
+     * This static unsigned long variable keeps track of the time (in milliseconds) when the buzzer
+     * was last activated. It can be used to implement timing logic, such as preventing the buzzer
+     * from sounding continuously or for a specified duration.
+     *
+     * This variable is essential for managing the buzzer's behavior in relation to time-sensitive actions,
+     * allowing for more controlled and efficient use of the buzzer.
+     */
+    static unsigned long last_buzzer_activate_ts;
+
+    /**
+     * @brief Static variable to define the duration of the buzzer beep.
+     *
+     * This static unsigned long variable specifies the length of time (in milliseconds) that the buzzer
+     * should sound when activated. It allows for customization of the beep duration, enabling various
+     * auditory feedback patterns in the system.
+     *
+     * This variable is crucial for ensuring consistent and controlled buzzer behavior, making it easier
+     * to manage user notifications or alerts based on time intervals.
+     */
+    static unsigned long buzzer_beep_duration;
+
+    /**
+     * @brief Checks if the beep duration for the buzzer has elapsed.
+     *
+     * This static function compares the current time against the last activation timestamp
+     * of the buzzer to determine if the specified beep duration has passed. It returns `true`
+     * if the duration has exceeded, indicating that the buzzer can be activated again or
+     * that the previous beep has completed.
+     *
+     * @return A boolean value:
+     *         - `true` if the beep duration is over,
+     *         - `false` if the beep duration is still active.
+     */
+    static bool isBeepDurationOver();
+
+    /**
+     * @brief Counts the number of beeps to determine when to silence the buzzer.
+     *
+     * This static variable holds the count of how many times the buzzer is allowed to beep
+     * before it silences. Each time the buzzer beeps, this count is decremented. When the
+     * count reaches zero, the buzzer will be turned off.
+     *
+     * @note Ensure to decrement this count each time the buzzer beeps. Once it reaches zero,
+     * the buzzer should be disabled to prevent further sounds until the count is reset.
+     */
+    static uint8_t buzzer_beep_count;
 };
 #endif

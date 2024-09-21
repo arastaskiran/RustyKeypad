@@ -14,7 +14,7 @@ void RustyKeypad::scan()
     }
 
     interrupted = false;
-
+    checkBuzzer();
     RustyKeyNode *temp = KeyList->getHead();
     bool change = false;
     String pressed_keys = "";
@@ -63,6 +63,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
         {
             keyDownListener(key->getKeyCode());
         }
+        beepBuzzer(1);
         break;
     case KeypadEventTypes::RKP_KEY_UP:
         appendKey(key->getKeyCode());
@@ -87,12 +88,14 @@ bool RustyKeypad::checkKey(RustyKey *key)
         {
             onDeleteListener(getDeleteKey());
         }
+        beepBuzzer(2);
         break;
     case KeypadEventTypes::RKP_RELEASE_DELETE:
         resetWaitKey();
         break;
     case KeypadEventTypes::RKP_CLEAR_SCREEN:
         clearScreen();
+        beepBuzzer(5);
         break;
     case KeypadEventTypes::RKP_PRESS_ENTER:
         setWaitKey(key);
@@ -100,6 +103,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
         {
             onEnterListener(getKeypadData());
         }
+        beepBuzzer(10);
         break;
     case KeypadEventTypes::RKP_RELEASE_ENTER:
         resetWaitKey();
