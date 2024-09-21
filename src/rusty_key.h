@@ -53,7 +53,13 @@ typedef enum KeypadEventTypes
     LONG_PRESS,
 
     /** The key is waiting for the next interaction. */
-    WAIT
+    WAIT,
+
+    /** The delete key press event. */
+    PRESS_DELETE,
+
+    /** The delete key release event. */
+    RELEASE_DELETE
 } KeypadEventTypes;
 
 class RustyKey
@@ -173,7 +179,7 @@ public:
      * @param key A pointer to the `RustyKey` object to compare against.
      * @return bool `true` if the keys are equal, `false` otherwise.
      */
-    bool isEqual(RustyKey *key);
+    bool isEqual(const RustyKey *key);
 
 protected:
 private:
@@ -340,5 +346,28 @@ private:
      * to accurately track new key events and interactions from the point of the reset.
      */
     void resetActivityTimer();
+
+    /**
+     * @brief Checks if the key press duration exceeds the T9 threshold.
+     *
+     * This function determines whether the duration for which a key has been held down
+     * surpasses the predefined threshold for T9 input. It is used to manage input
+     * behavior in T9 mode by ensuring that prolonged key presses are handled appropriately.
+     *
+     * @return bool `true` if the key press duration exceeds the T9 threshold, `false` otherwise.
+     */
+    bool isOverT9Duration();
+
+    /**
+     * @brief Checks if the key press duration exceeds the KEY_DOWN threshold.
+     *
+     * This function determines whether the duration for which a key has been held down
+     * exceeds the predefined threshold for KEY_DOWN events. It is used to manage input
+     * behavior by identifying if a prolonged key press has occurred.
+     *
+     * @return bool `true` if the key press duration exceeds the KEY_DOWN threshold, `false` otherwise.
+     */
+    bool isOverKeydownDuration();
+   
 };
 #endif

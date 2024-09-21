@@ -65,6 +65,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
         }
         break;
     case KeypadEventTypes::KEY_UP:
+        appendKey(key->getKeyCode());
         if (keyUpListener != NULL)
         {
             keyUpListener(key->getKeyCode());
@@ -79,6 +80,17 @@ bool RustyKeypad::checkKey(RustyKey *key)
         resetWaitKey();
         break;
 
+    case KeypadEventTypes::PRESS_DELETE:
+        setWaitKey(key);
+        deleteChar();
+        if (onDeleteListener != NULL)
+        {
+            onDeleteListener(getDeleteKey());
+        }
+        break;
+    case KeypadEventTypes::RELEASE_DELETE:
+        resetWaitKey();
+        break;
     default:
         break;
     }

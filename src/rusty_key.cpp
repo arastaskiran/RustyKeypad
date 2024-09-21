@@ -32,6 +32,10 @@ bool RustyKey::check()
     {
         if (new_state && current_event != WAIT)
         {
+            if (current_event == PRESS_DELETE)
+            {
+                return false;
+            }
             if (current_event == KEY_UP)
             {
                 char_index = 0;
@@ -56,6 +60,8 @@ bool RustyKey::check()
     setEvent(KEY_DOWN);
     return true;
 }
+
+
 void RustyKey::nextCharIndex()
 {
     if ((char_index + 1) >= (int)strlen(key_code))
@@ -67,9 +73,17 @@ void RustyKey::nextCharIndex()
 }
 bool RustyKey::checkTimeout()
 {
+    if (RustyKeypad::isDeleteKey(getFirstKeyCode()))
+    {
+        if (isOverT9Duration())
+        {
+            setEvent(PRESS_DELETE);
+            return true;
+        }
+    }
     if (RustyKeypad::getType() == T9)
     {
-        if ((millis() - last_activity_ts) > RustyKeypad::t9_duration)
+        if (isOverT9Duration())
         {
             nextCharIndex();
             setEvent(KEY_DOWN);
@@ -78,12 +92,22 @@ bool RustyKey::checkTimeout()
         return false;
     }
 
-    if ((millis() - last_activity_ts) > RustyKeypad::keydown_timeout)
+    if (isOverKeydownDuration())
     {
         setEvent(KEY_UP);
         return true;
     }
     return false;
+}
+
+bool RustyKey::isOverT9Duration()
+{
+    return ((millis() - last_activity_ts) > RustyKeypad::t9_duration);
+}
+
+bool RustyKey::isOverKeydownDuration()
+{
+    return ((millis() - last_activity_ts) > RustyKeypad::keydown_timeout);
 }
 
 bool RustyKey::isPressed()
@@ -93,6 +117,11 @@ bool RustyKey::isPressed()
 
 void RustyKey::analyzeState()
 {
+    if(getCurrentEvent()==PRESS_DELETE)
+    {
+        setEvent(RELEASE_DELETE);
+        return;
+    }
     if (RustyKeypad::getType() == T9)
     {
         setEvent(KEY_UP);
@@ -189,7 +218,7 @@ bool RustyKey::isScanAvailable()
     return ((millis() - last_activity_ts) > RUSTY_KEYPAD_KEY_FILTER_MILLIS);
 }
 
-bool RustyKey::isEqual(RustyKey *key)
+bool RustyKey::isEqual(const RustyKey *key)
 {
     if (key == nullptr)
         return false;

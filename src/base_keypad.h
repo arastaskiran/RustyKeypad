@@ -311,6 +311,66 @@ public:
     static void addMultipleKeyListener(void (*listener)(String));
 
     /**
+     * @brief Registers a listener for text changes.
+     *
+     * This static function allows you to register a callback function that will be triggered
+     * whenever there is a change in the text. The callback function should accept a `String`
+     * parameter representing the updated text.
+     *
+     * @param listener A pointer to the function that will handle text change events.
+     *                 The function must take a `String` argument representing the updated text.
+     *
+     * @example
+     * void onTextChange(String newText) {
+     *     // Handle the updated text
+     *     Serial.println(newText);
+     * }
+     *
+     * addTextChangeListener(onTextChange);
+     */
+    static void addTextChangeListener(void (*listener)(String));
+
+    /**
+     * @brief Registers a listener for the Enter key action.
+     *
+     * This static function allows you to register a callback function that will be triggered
+     * when the Enter key is pressed. The callback function should accept a `char` parameter
+     * representing the character associated with the Enter action.
+     *
+     * @param listener A pointer to the function that will handle the Enter key action.
+     *                 The function must take a `char` argument representing the Enter key.
+     *
+     * @example
+     * void onEnterPressed(char key) {
+     *     // Handle the Enter key press
+     *     Serial.println(key);
+     * }
+     *
+     * addEnterActionListener(onEnterPressed);
+     */
+    static void addEnterActionListener(void (*listener)(char));
+
+    /**
+     * @brief Registers a listener for the Delete key action.
+     *
+     * This static function allows you to register a callback function that will be triggered
+     * when the Delete key is pressed. The callback function should accept a `char` parameter
+     * representing the character associated with the Delete action.
+     *
+     * @param listener A pointer to the function that will handle the Delete key action.
+     *                 The function must take a `char` argument representing the Delete key.
+     *
+     * @example
+     * void onDeletePressed(char key) {
+     *     // Handle the Delete key press
+     *     Serial.println(key);
+     * }
+     *
+     * addDeleteActionListener(onDeletePressed);
+     */
+    static void addDeleteActionListener(void (*listener)(char));
+
+    /**
      * @brief Sets the type of the keypad.
      *
      * This static function configures the keypad to operate in a specific mode, as defined by the
@@ -357,6 +417,39 @@ public:
      * }
      */
     static bool isEnabled();
+
+    /**
+     * @brief Checks if the given key is the designated delete key.
+     *
+     * This function returns `true` if the provided key matches the key currently assigned
+     * as the delete key. It allows the system to verify whether the specified key
+     * is used for delete operations.
+     *
+     * @param key The key to check.
+     * @return bool `true` if the provided key is the delete key, `false` otherwise.
+     */
+    static bool isDeleteKey(char key);
+
+    /**
+     * @brief Assigns a key to be used as the delete key on the keyboard.
+     *
+     * This function designates a specific key to act as the delete key. Since each key
+     * can represent multiple characters, the first character of the key is passed to
+     * this method. When the assigned delete key is held down, it will remove one character
+     * at a time from the end of the text input.
+     *
+     * @param key The first character of the key to be used as the delete key.
+     */
+    static void useDeleteKey(char key);
+
+    /**
+     * @brief Disables the delete key functionality.
+     *
+     * This function deactivates the delete key feature, removing any previously assigned
+     * key from being used for delete operations. Once this function is called, no key will
+     * act as the delete key until a new one is assigned.
+     */
+    static void ignoreDeleteKey();
 
 protected:
     /**
@@ -475,6 +568,39 @@ protected:
     static void (*multipleKeyListener)(String);
 
     /**
+     * @brief Pointer to the function handling text change events.
+     *
+     * This static variable holds a pointer to a function that will be called whenever there is a change
+     * in the text. The function should accept a `String` parameter representing the updated text.
+     *
+     * @note This function pointer is used by the `addTextChangeListener` method to register a text
+     * change event handler.
+     */
+    static void (*textChangeListener)(String);
+
+    /**
+     * @brief Pointer to the function handling the Enter key action.
+     *
+     * This static variable holds a pointer to a function that will be called when the Enter key is pressed.
+     * The function should accept a `char` parameter representing the character associated with the Enter action.
+     *
+     * @note This function pointer is used by the `addEnterActionListener` method to register an Enter key
+     * action handler.
+     */
+    static void (*onEnterListener)(char);
+
+    /**
+     * @brief Pointer to the function handling the Delete key action.
+     *
+     * This static variable holds a pointer to a function that will be called when the Delete key is pressed.
+     * The function should accept a `char` parameter representing the character associated with the Delete action.
+     *
+     * @note This function pointer is used by the `addDeleteActionListener` method to register a Delete key
+     * action handler.
+     */
+    static void (*onDeleteListener)(char);
+
+    /**
      * @brief Indicates whether an interrupt has occurred.
      *
      * This static boolean variable tracks whether an interrupt has been triggered by certain keys, such as
@@ -529,6 +655,50 @@ protected:
      * was blocking further input due to the T9 mode's single key press restriction.
      */
     static void resetWaitKey();
+
+    /**
+     * @brief Checks if a delete key is currently assigned.
+     *
+     * This function returns `true` if a key has been set to act as the delete key on the keyboard.
+     * It helps to determine whether any key is currently being used for delete operations.
+     *
+     * @return bool `true` if a delete key is assigned, `false` otherwise.
+     */
+    static bool hasDeleteKey();
+
+    /**
+     * @brief Retrieves the delete key character.
+     *
+     * This static function returns a copy of the character that is set as the delete key.
+     * The returned value is const, preventing modification to the original delete key.
+     *
+     * @return char A copy of the delete key character.
+     */
+    static char getDeleteKey();
+
+    /**
+     * @brief Appends a character to the `keypad_data` at the current cursor position.
+     *
+     * This static function adds the character entered from the keypad to the `keypad_data` string
+     * at the position specified by `keypad_data_cursor`. The cursor is automatically updated after the
+     * character is inserted. This method is typically triggered by the `KEY_UP` event, indicating that
+     * a key has been released.
+     *
+     * @param key The character to be appended to `keypad_data`.
+     *
+     * @note The cursor position (`keypad_data_cursor`) is incremented after the key is appended.
+     */
+    static void appendKey(char key);
+
+    /**
+     * @brief Deletes a character from the text based on the cursor position.
+     *
+     * This function removes a character from the text input at the current cursor position.
+     * It adjusts the text accordingly, ensuring that the remaining characters are
+     * correctly repositioned after the deletion. This function is typically used
+     * in conjunction with cursor navigation to manage text editing operations.
+     */
+    static void deleteChar();
 
 private:
     /**
@@ -619,20 +789,6 @@ private:
     static unsigned long last_activity_ts;
 
     /**
-     * @brief Appends a character to the `keypad_data` at the current cursor position.
-     *
-     * This static function adds the character entered from the keypad to the `keypad_data` string
-     * at the position specified by `keypad_data_cursor`. The cursor is automatically updated after the
-     * character is inserted. This method is typically triggered by the `KEY_UP` event, indicating that
-     * a key has been released.
-     *
-     * @param key The character to be appended to `keypad_data`.
-     *
-     * @note The cursor position (`keypad_data_cursor`) is incremented after the key is appended.
-     */
-    static void appendKey(char key);
-
-    /**
      * @brief Holds the digital output pins used to drive the keypad rows.
      *
      * This static pointer stores the array of digital output pins that are used to control the rows
@@ -678,5 +834,33 @@ private:
      * maintaining the integrity of input during typing.
      */
     static RustyKey *waitKey;
+
+    /**
+     * @brief Indicates whether a delete key has been set.
+     *
+     * This variable is used to track if a specific key has been designated as the delete key.
+     * It is set to `true` if a delete key has been defined, allowing the system to recognize
+     * and handle delete operations. If no delete key has been assigned, this will remain `false`.
+     */
+    static bool has_delete_key;
+
+    /**
+     * @brief Stores the designated delete key.
+     *
+     * This variable holds the key that has been assigned as the delete key.
+     * If a specific key has been set to perform delete operations, its value
+     * is stored here. It allows the system to recognize which key is used
+     * for deleting inputs.
+     */
+    static char delete_key;
+
+    /**
+     * @brief Maximum length of text input from the keypad.
+     *
+     * This variable defines the maximum number of characters that can be inputted
+     * from the keypad. The default length is set to 20 characters. This limit
+     * helps to ensure that the text input remains manageable and avoids buffer overflow.
+     */
+    static uint8_t max_text_length;
 };
 #endif

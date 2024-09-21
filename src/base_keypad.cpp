@@ -4,11 +4,14 @@
 uint8_t BaseRustyKeypad::pins_mode{INPUT_PULLUP};
 uint8_t BaseRustyKeypad::row_size{4};
 uint8_t BaseRustyKeypad::col_size{3};
+uint8_t BaseRustyKeypad::max_text_length{20};
 unsigned int BaseRustyKeypad::keypad_data_cursor{0};
 char BaseRustyKeypad::float_char{'*'};
+char BaseRustyKeypad::delete_key{'*'};
 KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
+bool BaseRustyKeypad::has_delete_key{true};
 const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
     {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
     {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
@@ -29,7 +32,10 @@ void (*BaseRustyKeypad::keyDownListener)(char){0};
 
 void (*BaseRustyKeypad::keyUpListener)(char){0};
 void (*BaseRustyKeypad::longPressListener)(char){0};
+void (*BaseRustyKeypad::onEnterListener)(char){0};
+void (*BaseRustyKeypad::onDeleteListener)(char){0};
 void (*BaseRustyKeypad::multipleKeyListener)(String){0};
+void (*BaseRustyKeypad::textChangeListener)(String){0};
 
 void BaseRustyKeypad::keyboardSetup(const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
                                     const uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
@@ -98,12 +104,42 @@ void BaseRustyKeypad::disable()
 
 void BaseRustyKeypad::appendKey(char key)
 {
+    if (keypad_data.length() >= max_text_length)
+    {
+        return;
+    }
     if (keypad_data.length() == keypad_data_cursor)
     {
         keypad_data = keypad_data + String(key);
     }
 
     keypad_data_cursor++;
+    if (textChangeListener != NULL)
+    {
+        textChangeListener(keypad_data);
+    }
+}
+
+void BaseRustyKeypad::deleteChar()
+{
+    if (keypad_data.length() == 0)
+    {
+        return;
+    }
+    if (keypad_data_cursor < keypad_data.length())
+    {
+        keypad_data.remove(keypad_data_cursor, 1);
+    }
+    else
+    {
+        keypad_data.remove(keypad_data.length() - 1);
+    }
+
+    keypad_data_cursor--;
+    if (textChangeListener != NULL)
+    {
+        textChangeListener(keypad_data);
+    }
 }
 
 void BaseRustyKeypad::setFactoryConfig()
@@ -143,9 +179,24 @@ void BaseRustyKeypad::addLongPressListener(void (*listener)(char))
     longPressListener = listener;
 }
 
+void BaseRustyKeypad::addEnterActionListener(void (*listener)(char))
+{
+    onEnterListener = listener;
+}
+
+void BaseRustyKeypad::addDeleteActionListener(void (*listener)(char))
+{
+    onDeleteListener = listener;
+}
+
 void BaseRustyKeypad::addMultipleKeyListener(void (*listener)(String))
 {
     multipleKeyListener = listener;
+}
+
+void BaseRustyKeypad::addTextChangeListener(void (*listener)(String))
+{
+    textChangeListener = listener;
 }
 
 bool BaseRustyKeypad::isEnabled()
@@ -172,27 +223,44 @@ bool BaseRustyKeypad::checkWaitKey(RustyKey *key)
 {
     if (!hasWaitKey())
         return false;
-    if (getType() != T9)
-    {
-        waitKey = nullptr;
-        return false;
-        
-    }
 
     return !key->isEqual(waitKey);
 }
 
 void BaseRustyKeypad::setWaitKey(RustyKey *key)
 {
-    if (getType() != T9)
-    {
-        waitKey = nullptr;
-        return;
-    }
     waitKey = key;
 }
 
 void BaseRustyKeypad::resetWaitKey()
 {
     waitKey = nullptr;
+}
+
+bool BaseRustyKeypad::isDeleteKey(char key)
+{
+    if (!hasDeleteKey())
+        return false;
+    return key == delete_key;
+}
+
+char BaseRustyKeypad::getDeleteKey()
+{
+    return delete_key;
+}
+
+void BaseRustyKeypad::ignoreDeleteKey()
+{
+    has_delete_key = false;
+}
+
+void BaseRustyKeypad::useDeleteKey(char key)
+{
+    delete_key = key;
+    has_delete_key = true;
+}
+
+bool BaseRustyKeypad::hasDeleteKey()
+{
+    return has_delete_key;
 }
