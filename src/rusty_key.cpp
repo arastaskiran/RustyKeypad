@@ -191,5 +191,8 @@ bool RustyKey::isScanAvailable()
 
 bool RustyKey::isEqual(RustyKey *key)
 {
+    if (key == nullptr)
+        return false;
+
     return getFirstKeyCode() == key->getFirstKeyCode();
 }

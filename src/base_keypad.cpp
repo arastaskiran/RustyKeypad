@@ -61,6 +61,7 @@ void BaseRustyKeypad::keyboardSetup(const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_
     row_size = row;
     col_size = col;
     pins_mode = mode;
+    reset();
 }
 
 void BaseRustyKeypad::reset()
@@ -68,6 +69,7 @@ void BaseRustyKeypad::reset()
 
     clearScreen();
     interrupted = true;
+    waitKey = nullptr;
 }
 void BaseRustyKeypad::clearScreen()
 {
@@ -159,4 +161,38 @@ void BaseRustyKeypad::setType(KeypadTypes type)
 KeypadTypes BaseRustyKeypad::getType()
 {
     return keypad_type;
+}
+
+bool BaseRustyKeypad::hasWaitKey()
+{
+    return waitKey != nullptr;
+}
+
+bool BaseRustyKeypad::checkWaitKey(RustyKey *key)
+{
+    if (!hasWaitKey())
+        return false;
+    if (getType() != T9)
+    {
+        waitKey = nullptr;
+        return false;
+        
+    }
+
+    return !key->isEqual(waitKey);
+}
+
+void BaseRustyKeypad::setWaitKey(RustyKey *key)
+{
+    if (getType() != T9)
+    {
+        waitKey = nullptr;
+        return;
+    }
+    waitKey = key;
+}
+
+void BaseRustyKeypad::resetWaitKey()
+{
+    waitKey = nullptr;
 }

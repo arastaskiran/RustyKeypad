@@ -486,15 +486,49 @@ protected:
     static bool interrupted;
 
     /**
-     * @brief Holds the last key pressed in T9 mode.
+     * @brief Checks if a key is currently pressed in T9 mode.
      *
-     * In T9 mode, multiple key presses are not allowed. This variable stores
-     * the reference to the last key that was pressed and prevents any other
-     * key detection until the current key is released.
-     * It ensures that only one key is processed at a time,
-     * maintaining the integrity of input during typing.
+     * This function returns `true` if a key is still being pressed in T9 mode,
+     * preventing multiple key presses from being processed simultaneously.
+     * It ensures that no other key inputs are considered until the current
+     * key is released, enforcing single key press behavior in T9 mode.
+     *
+     * @return bool `true` if a key is currently pressed, `false` otherwise.
      */
-    static RustyKey *waitKey;
+    static bool hasWaitKey();
+
+    /**
+     * @brief Verifies if the scanned key is different from the currently pressed key in T9 mode.
+     *
+     * In T9 mode, this function checks whether the provided key is different from the key
+     * that is currently being pressed. If the scanned key is not the one currently pressed,
+     * it returns `true`. This can be used in an iteration to skip to the next key.
+     *
+     * @param key A pointer to the `RustyKey` object to compare against the current key.
+     * @return bool `true` if the scanned key is different from the currently pressed key, `false` otherwise.
+     */
+    static bool checkWaitKey(RustyKey *key);
+
+    /**
+     * @brief Sets the currently pressed key in T9 mode to block other key scans.
+     *
+     * This function assigns the provided key as the currently pressed key in T9 mode.
+     * It prevents other keys from being scanned until the current key is released.
+     * Use this function to track the key being pressed and to ensure that no multiple
+     * key inputs are processed simultaneously in T9 mode.
+     *
+     * @param key A pointer to the `RustyKey` object representing the key being pressed.
+     */
+    static void setWaitKey(RustyKey *key);
+
+    /**
+     * @brief Releases the key blocking caused by T9 mode.
+     *
+     * This function clears the currently pressed key in T9 mode, allowing other keys
+     * to be scanned again. It effectively resets the state by releasing the key that
+     * was blocking further input due to the T9 mode's single key press restriction.
+     */
+    static void resetWaitKey();
 
 private:
     /**
@@ -633,5 +667,16 @@ private:
      * of the class.
      */
     static const char *keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE];
+
+    /**
+     * @brief Holds the last key pressed in T9 mode.
+     *
+     * In T9 mode, multiple key presses are not allowed. This variable stores
+     * the reference to the last key that was pressed and prevents any other
+     * key detection until the current key is released.
+     * It ensures that only one key is processed at a time,
+     * maintaining the integrity of input during typing.
+     */
+    static RustyKey *waitKey;
 };
 #endif
