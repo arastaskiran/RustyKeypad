@@ -57,6 +57,26 @@ struct RustyKeyNode
         : data(new RustyKey(key, row_pin, col_pin)), next(nullptr) {}
 
     /**
+     * @brief Assignment operator for copying
+     *
+     * This operator is used to assign one RustyKeyNode object to another. It manages the existing resources
+     * and performs dynamic memory operations to prevent memory leaks.
+     *
+     * @param other Reference to another RustyKeyNode object used for the assignment.
+     * @return RustyKeyNode& Reference to the current object.
+     */
+    RustyKeyNode &operator=(const RustyKeyNode &other);
+
+    /**
+     * @brief Copy constructor
+     *
+     * Constructs a new RustyKeyNode object by copying data from another RustyKeyNode object.
+     *
+     * @param other Reference to the RustyKeyNode object to be copied.
+     */
+    RustyKeyNode(const RustyKeyNode &other);
+
+    /**
      * @brief Destructor for cleaning up the `RustyKeyNode`.
      *
      * Deletes the `RustyKey` object pointed to by `data` and sets the pointer to `nullptr` to avoid

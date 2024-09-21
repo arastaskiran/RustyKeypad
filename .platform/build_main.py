@@ -23,7 +23,7 @@ void keyDown(char x)
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   RustyKeypad::addKeyUpListener(keyUp);
   RustyKeypad::addMultipleKeyListener(multipleKey);
   RustyKeypad::addKeyDownListener(keyDown);

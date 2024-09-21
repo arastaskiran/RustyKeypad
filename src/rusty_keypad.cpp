@@ -13,16 +13,21 @@ void RustyKeypad::scan()
         setFactoryConfig();
     }
 
-    if (interrupted)
-    {
-        interrupted = false;
-    }
+    interrupted = false;
 
     RustyKeyNode *temp = KeyList->getHead();
     bool change = false;
     String pressed_keys = "";
     while (temp != nullptr)
     {
+        if (waitKey != nullptr)
+        {
+            if (!temp->data->isEqual(waitKey))
+            {
+                temp = temp->next;
+                continue;
+            }
+        }
         if (checkKey(temp->data))
         {
             change = !interrupted;
@@ -30,7 +35,14 @@ void RustyKeypad::scan()
         if (interrupted)
             break;
         if (temp->data->isPressed())
+        {
             pressed_keys += String(temp->data->getKeyCode());
+            if (getType() == T9)
+            {
+                waitKey = temp->data;
+                break;
+            }
+        }
 
         temp = temp->next;
     }
@@ -59,12 +71,14 @@ bool RustyKeypad::checkKey(RustyKey *key)
         {
             keyUpListener(key->getKeyCode());
         }
+        waitKey = nullptr;
         break;
     case KeypadEventTypes::LONG_PRESS:
         if (longPressListener != NULL)
         {
             longPressListener(key->getKeyCode());
         }
+        waitKey = nullptr;
         break;
 
     default:

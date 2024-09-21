@@ -10,6 +10,22 @@ RustyKeyList::~RustyKeyList()
     clear();
 }
 
+
+RustyKeyNode& RustyKeyNode::operator=(const RustyKeyNode& other) {
+    if (this == &other) {
+        return *this; 
+    }    
+    delete data;
+    data=nullptr;
+    data = new RustyKey(*other.data); 
+    next = other.next; 
+
+    return *this;
+}
+
+RustyKeyNode::RustyKeyNode(const RustyKeyNode& other)
+    : data(new RustyKey(*other.data)), next(other.next) {}
+
 void RustyKeyList::append(const char * key, uint8_t row_pin, uint8_t col_pin)
 {
     RustyKeyNode *newNode = new RustyKeyNode(key, row_pin, col_pin);

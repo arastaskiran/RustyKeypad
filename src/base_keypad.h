@@ -153,8 +153,8 @@ public:
      */
     static void keyboardSetup(
         const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
-        uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
-        uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
+        const uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
+        const uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
         uint8_t row,
         uint8_t col,
         uint8_t mode = INPUT_PULLUP);
@@ -360,6 +360,38 @@ public:
 
 protected:
     /**
+     * @brief Configures the keypad with factory default settings.
+     *
+     * This static function sets up the keypad using predefined factory settings. It initializes the
+     * keypad matrix with a standard character map, defines the number of rows and columns, and configures
+     * the pin modes. The default configuration is set as follows:
+     *
+     * - Keypad matrix map:
+     *   - Row 0: {"1.,?!'\"-()@/:_"}
+     *   - Row 1: {"2ABCabc"}
+     *   - Row 2: {"3DEFdef"}
+     *   - Row 3: {"4GHIghiİ"}
+     *   - Row 4: {"5JKLjkl"}
+     *   - Row 5: {"6MNOmnoÖö"}
+     *   - Row 6: {"7PQRSpqrsŞş"}
+     *   - Row 7: {"8TUVtuvÜü"}
+     *   - Row 8: {"9WXYZwxyz"}
+     *   - Row 9: {"*"}
+     *   - Row 10: {"0 +"}
+     *   - Row 11: {"#"}
+     *
+     * - Number of rows: 4
+     * - Number of columns: 3
+     * - Pin mode: INPUT_PULLUP
+     *
+     * This method calls `keyboardSetup` with the above parameters to apply the factory settings to the keypad.
+     *
+     * @note This function is typically used to restore the keypad to its default configuration or initialize
+     *       it for the first time.
+     */
+    static void setFactoryConfig();
+
+    /**
      * @brief Resets the keypad to its default state.
      *
      * This static function performs a complete reset of the keypad system by:
@@ -400,38 +432,6 @@ protected:
      * @note Ensure proper management of this linked list to avoid memory leaks or access issues.
      */
     static RustyKeyList *KeyList;
-
-    /**
-     * @brief Configures the keypad with factory default settings.
-     *
-     * This static function sets up the keypad using predefined factory settings. It initializes the
-     * keypad matrix with a standard character map, defines the number of rows and columns, and configures
-     * the pin modes. The default configuration is set as follows:
-     *
-     * - Keypad matrix map:
-     *   - Row 0: {"1.,?!'\"-()@/:_"}
-     *   - Row 1: {"2ABCabc"}
-     *   - Row 2: {"3DEFdef"}
-     *   - Row 3: {"4GHIghiİ"}
-     *   - Row 4: {"5JKLjkl"}
-     *   - Row 5: {"6MNOmnoÖö"}
-     *   - Row 6: {"7PQRSpqrsŞş"}
-     *   - Row 7: {"8TUVtuvÜü"}
-     *   - Row 8: {"9WXYZwxyz"}
-     *   - Row 9: {"*"}
-     *   - Row 10: {"0 +"}
-     *   - Row 11: {"#"}
-     *
-     * - Number of rows: 4
-     * - Number of columns: 3
-     * - Pin mode: INPUT_PULLUP
-     *
-     * This method calls `keyboardSetup` with the above parameters to apply the factory settings to the keypad.
-     *
-     * @note This function is typically used to restore the keypad to its default configuration or initialize
-     *       it for the first time.
-     */
-    static void setFactoryConfig();
 
     /**
      * @brief Pointer to the function handling key down events.
@@ -484,6 +484,17 @@ protected:
      * @note The variable is set to `true` when an interrupt is triggered and `false` otherwise.
      */
     static bool interrupted;
+
+    /**
+     * @brief Holds the last key pressed in T9 mode.
+     *
+     * In T9 mode, multiple key presses are not allowed. This variable stores
+     * the reference to the last key that was pressed and prevents any other
+     * key detection until the current key is released.
+     * It ensures that only one key is processed at a time,
+     * maintaining the integrity of input during typing.
+     */
+    static RustyKey *waitKey;
 
 private:
     /**
@@ -612,5 +623,15 @@ private:
      *       keypad configuration rather than using the maximum predefined size.
      */
     static void resizeRowPins(size_t size);
+
+    /**
+     * @brief A static constant 2D array representing the factory keypad layout.
+     *
+     * This array defines the default key mappings for the keypad interface,
+     * with each entry corresponding to a specific key configuration.
+     * As a static member, it ensures consistent access across all instances
+     * of the class.
+     */
+    static const char *keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE];
 };
 #endif

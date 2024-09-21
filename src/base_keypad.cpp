@@ -9,6 +9,13 @@ char BaseRustyKeypad::float_char{'*'};
 KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
+const char *BaseRustyKeypad::keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
+    {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
+    {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
+    {"7PQRSpqrsŞş", "8TUVtuvÜü", "9WXYZwxyz"},
+    {"*", "0 +", "#"},
+};
+RustyKey *BaseRustyKeypad::waitKey{nullptr};
 
 String BaseRustyKeypad::keypad_data{""};
 unsigned long BaseRustyKeypad::keydown_timeout{1500};
@@ -25,8 +32,8 @@ void (*BaseRustyKeypad::longPressListener)(char){0};
 void (*BaseRustyKeypad::multipleKeyListener)(String){0};
 
 void BaseRustyKeypad::keyboardSetup(const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE],
-                                    uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
-                                    uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
+                                    const uint8_t row_pins[MAX_KEYPAD_MATRIX_SIZE],
+                                    const uint8_t col_pins[MAX_KEYPAD_MATRIX_SIZE],
                                     uint8_t row,
                                     uint8_t col,
                                     uint8_t mode)
@@ -99,17 +106,10 @@ void BaseRustyKeypad::appendKey(char key)
 
 void BaseRustyKeypad::setFactoryConfig()
 {
-    const char *map[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
-        {"1.,?!'\"-()@/:_", "2ABCabc", "3DEFdef"},
-        {"4GHIghiİ", "5JKLjkl", "6MNOmnoÖö"},
-        {"7PQRSpqrsŞş", "8TUVtuvÜü", "9WXYZwxyz"},
-        {"*", "0 +", "#"},
-    };
-
     uint8_t rows[MAX_KEYPAD_MATRIX_SIZE] = {2U, 3U, 4U, 5U};
     uint8_t cols[MAX_KEYPAD_MATRIX_SIZE] = {6U, 7U, 8U};
     keyboardSetup(
-        map,
+        keypadFactoryMap,
         rows,
         cols,
         (uint8_t)4,
@@ -123,7 +123,7 @@ void BaseRustyKeypad::resizeRowPins(size_t size)
     {
         free(row_out_pins);
     }
-    row_out_pins = (uint8_t *)malloc(size * sizeof(uint8_t));
+    row_out_pins = static_cast<uint8_t *>(malloc(size * sizeof(uint8_t)));
 }
 
 void BaseRustyKeypad::addKeyDownListener(void (*listener)(char))

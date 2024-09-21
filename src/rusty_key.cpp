@@ -168,6 +168,11 @@ char RustyKey::getKeyCode() const
     return key_code[char_index];
 }
 
+char RustyKey::getFirstKeyCode() const
+{
+    return key_code[0];
+}
+
 void RustyKey::setEvent(KeypadEventTypes e)
 {
 
@@ -182,4 +187,9 @@ void RustyKey::resetActivityTimer()
 bool RustyKey::isScanAvailable()
 {
     return ((millis() - last_activity_ts) > RUSTY_KEYPAD_KEY_FILTER_MILLIS);
+}
+
+bool RustyKey::isEqual(RustyKey *key)
+{
+    return getFirstKeyCode() == key->getFirstKeyCode();
 }

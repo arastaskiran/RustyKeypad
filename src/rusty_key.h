@@ -152,6 +152,29 @@ public:
      */
     char getKeyCode() const;
 
+    /**
+     * @brief Retrieves the first key code from the key map.
+     *
+     * This function returns the key code associated with the first character
+     * in the key map. It provides a way to access the initial input value
+     * from the keypad configuration.
+     *
+     * @return char The first key code from the key map.
+     */
+    char getFirstKeyCode() const;
+
+    /**
+     * @brief Compares the current key with another key for equality.
+     *
+     * This function checks if the current `RustyKey` object is equal to
+     * the provided `RustyKey` pointer. Equality is determined based on
+     * the relevant attributes of the keys, such as their values or properties.
+     *
+     * @param key A pointer to the `RustyKey` object to compare against.
+     * @return bool `true` if the keys are equal, `false` otherwise.
+     */
+    bool isEqual(RustyKey *key);
+
 protected:
 private:
     /**
