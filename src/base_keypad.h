@@ -56,61 +56,16 @@
  */
 typedef enum
 {
-    /** Keypad for integer input. */
-    INTEGER,
+    /** Keypad for RKP_INTEGER input. */
+    RKP_INTEGER,
 
     /** Keypad for floating-point input. */
-    FLOAT,
+    RKP_FLOAT,
 
-    /** Keypad for T9 text input. */
-    T9
+    /** Keypad for RKP_T9 text input. */
+    RKP_T9
 
 } KeypadTypes;
-
-/**
- * @enum KeypadActionEvents
- * @brief Defines various actions or events associated with keypad interactions.
- *
- * This enumeration represents the different actions or events that can occur on a keypad,
- * such as entering a value, deleting, clearing, or indicating idle states.
- */
-typedef enum
-{
-    /** No action or event. */
-    NONE_KEY_ACTION,
-
-    /** The action of entering a value. */
-    ENTER,
-
-    /** The action of deleting a value. */
-    DELETE,
-
-    /** The action of clearing the keypad input. */
-    CLEAR,
-
-    /** Indicates that the state has changed. */
-    CHANGED,
-
-    /** The keypad is idle, with no current action. */
-    IDLE
-} KeypadActionEvents;
-
-/**
- * @enum KeypadDriverTypes
- * @brief Defines different types of keypad scanning methods.
- *
- * This enumeration represents the scanning methods used by the keypad driver,
- * determining how the keypad input is processed.
- */
-typedef enum
-{
-    /** Scans the keypad in a continuous loop. */
-    SCAN_IN_LOOP = 0,
-
-    /** Scans the keypad in a single iteration. */
-    SCAN_ITERATION = 1
-
-} KeypadDriverTypes;
 
 class BaseRustyKeypad
 {
@@ -218,11 +173,11 @@ public:
      *
      * This static variable sets a timeout duration (in milliseconds) for a key being held down.
      * If a key is pressed longer than this duration, it simulates a key release followed by a new key press,
-     * even if the key is still held down. This feature does not function in T9 mode.
+     * even if the key is still held down. This feature does not function in RKP_T9 mode.
      *
      * - The value of `keydown_timeout` must be greater than `long_press_duration`.
      *
-     * @note The value is specified in milliseconds and is used to manage prolonged key presses in non-T9 modes.
+     * @note The value is specified in milliseconds and is used to manage prolonged key presses in non-RKP_T9 modes.
      */
     static unsigned long keydown_timeout;
 
@@ -238,16 +193,16 @@ public:
     static unsigned long long_press_duration;
 
     /**
-     * @brief Defines the duration for cycling through T9 characters, in milliseconds.
+     * @brief Defines the duration for cycling through RKP_T9 characters, in milliseconds.
      *
      * This static variable sets the time (in milliseconds) for how long a key must be held down
-     * to cycle through its assigned characters in T9 mode. For example, if the '1' key is assigned
+     * to cycle through its assigned characters in RKP_T9 mode. For example, if the '1' key is assigned
      * '1.,?!', holding the key will cycle through these characters based on the `t9_duration`.
      *
      * - The value of `t9_duration` must be smaller than both `keydown_timeout` and `long_press_duration`.
      *
      * @note The value is specified in milliseconds, and it determines how fast you can switch
-     * between characters when the keypad is in T9 mode.
+     * between characters when the keypad is in RKP_T9 mode.
      */
     static unsigned long t9_duration;
 
@@ -398,10 +353,10 @@ public:
      * `KeypadTypes` enumeration. The type determines the functionality and behavior of the keypad.
      *
      * @param type  The type of the keypad, specified using the `KeypadTypes` enumeration.
-     *              Possible values include `INTEGER`, `FLOAT`, and `T9`.
+     *              Possible values include `RKP_INTEGER`, `RKP_FLOAT`, and `RKP_T9`.
      *
      * @example
-     * setType(INTEGER);  // Configures the keypad for integer input
+     * setType(RKP_INTEGER);  // Configures the keypad for RKP_INTEGER input
      */
     static void setType(KeypadTypes type);
 
@@ -412,11 +367,11 @@ public:
      * `KeypadTypes` enumeration. It indicates which mode the keypad is operating in.
      *
      * @return The type of the keypad, specified using the `KeypadTypes` enumeration.
-     *         Possible values include `INTEGER`, `FLOAT`, and `T9`.
+     *         Possible values include `RKP_INTEGER`, `RKP_FLOAT`, and `RKP_T9`.
      *
      * @example
      * KeypadTypes currentType = getType();
-     * if (currentType == FLOAT) {
+     * if (currentType == RKP_FLOAT) {
      *     // Keypad is configured for floating-point input
      * }
      */
@@ -633,21 +588,21 @@ protected:
     static bool interrupted;
 
     /**
-     * @brief Checks if a key is currently pressed in T9 mode.
+     * @brief Checks if a key is currently pressed in RKP_T9 mode.
      *
-     * This function returns `true` if a key is still being pressed in T9 mode,
+     * This function returns `true` if a key is still being pressed in RKP_T9 mode,
      * preventing multiple key presses from being processed simultaneously.
      * It ensures that no other key inputs are considered until the current
-     * key is released, enforcing single key press behavior in T9 mode.
+     * key is released, enforcing single key press behavior in RKP_T9 mode.
      *
      * @return bool `true` if a key is currently pressed, `false` otherwise.
      */
     static bool hasWaitKey();
 
     /**
-     * @brief Verifies if the scanned key is different from the currently pressed key in T9 mode.
+     * @brief Verifies if the scanned key is different from the currently pressed key in RKP_T9 mode.
      *
-     * In T9 mode, this function checks whether the provided key is different from the key
+     * In RKP_T9 mode, this function checks whether the provided key is different from the key
      * that is currently being pressed. If the scanned key is not the one currently pressed,
      * it returns `true`. This can be used in an iteration to skip to the next key.
      *
@@ -657,23 +612,23 @@ protected:
     static bool checkWaitKey(RustyKey *key);
 
     /**
-     * @brief Sets the currently pressed key in T9 mode to block other key scans.
+     * @brief Sets the currently pressed key in RKP_T9 mode to block other key scans.
      *
-     * This function assigns the provided key as the currently pressed key in T9 mode.
+     * This function assigns the provided key as the currently pressed key in RKP_T9 mode.
      * It prevents other keys from being scanned until the current key is released.
      * Use this function to track the key being pressed and to ensure that no multiple
-     * key inputs are processed simultaneously in T9 mode.
+     * key inputs are processed simultaneously in RKP_T9 mode.
      *
      * @param key A pointer to the `RustyKey` object representing the key being pressed.
      */
     static void setWaitKey(RustyKey *key);
 
     /**
-     * @brief Releases the key blocking caused by T9 mode.
+     * @brief Releases the key blocking caused by RKP_T9 mode.
      *
-     * This function clears the currently pressed key in T9 mode, allowing other keys
+     * This function clears the currently pressed key in RKP_T9 mode, allowing other keys
      * to be scanned again. It effectively resets the state by releasing the key that
-     * was blocking further input due to the T9 mode's single key press restriction.
+     * was blocking further input due to the RKP_T9 mode's single key press restriction.
      */
     static void resetWaitKey();
 
@@ -702,7 +657,7 @@ protected:
      *
      * This static function adds the character entered from the keypad to the `keypad_data` string
      * at the position specified by `keypad_data_cursor`. The cursor is automatically updated after the
-     * character is inserted. This method is typically triggered by the `KEY_UP` event, indicating that
+     * character is inserted. This method is typically triggered by the `RKP_KEY_UP` event, indicating that
      * a key has been released.
      *
      * @param key The character to be appended to `keypad_data`.
@@ -752,7 +707,7 @@ private:
      * @brief Holds the current type of the keypad.
      *
      * This static variable stores the type of the keypad as defined by the `KeypadTypes` enumeration.
-     * It determines the behavior and mode of the keypad, such as `INTEGER`, `FLOAT`, or `T9`.
+     * It determines the behavior and mode of the keypad, such as `RKP_INTEGER`, `RKP_FLOAT`, or `RKP_T9`.
      */
     static KeypadTypes keypad_type;
 
@@ -846,9 +801,9 @@ private:
     static const char *keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE];
 
     /**
-     * @brief Holds the last key pressed in T9 mode.
+     * @brief Holds the last key pressed in RKP_T9 mode.
      *
-     * In T9 mode, multiple key presses are not allowed. This variable stores
+     * In RKP_T9 mode, multiple key presses are not allowed. This variable stores
      * the reference to the last key that was pressed and prevents any other
      * key detection until the current key is released.
      * It ensures that only one key is processed at a time,

@@ -10,7 +10,7 @@ RustyKey::RustyKey(const char *key, uint8_t row_pin, uint8_t col_pin)
     current_state = false;
     enabled = true;
     char_index = 0;
-    setEvent(KEY_IDLE);
+    setEvent(RKP_KEY_IDLE);
     pinMode(row_pin, OUTPUT);
     pinMode(col_pin, RustyKeypad::pins_mode);
 }
@@ -30,25 +30,7 @@ bool RustyKey::check()
     bool new_state = read();
     if (new_state == current_state)
     {
-        if (new_state && current_event != WAIT)
-        {
-            if (current_event == PRESS_DELETE)
-            {
-                return false;
-            }
-            if (current_event == KEY_UP)
-            {
-                char_index = 0;
-                setEvent(KEY_DOWN);
-                return true;
-            }
-            setEvent(WAIT);
-        }
-        else if (!new_state && current_event != KEY_IDLE)
-        {
-            setEvent(KEY_IDLE);
-        }
-        return !current_state ? false : checkTimeout();
+        return analyzeSameState(new_state);
     }
     current_state = new_state;
     if (!new_state)
@@ -57,10 +39,9 @@ bool RustyKey::check()
         return true;
     }
     char_index = 0;
-    setEvent(KEY_DOWN);
+    setEvent(RKP_KEY_DOWN);
     return true;
 }
-
 
 void RustyKey::nextCharIndex()
 {
@@ -77,16 +58,16 @@ bool RustyKey::checkTimeout()
     {
         if (isOverT9Duration())
         {
-            setEvent(PRESS_DELETE);
+            setEvent(RKP_PRESS_DELETE);
             return true;
         }
     }
-    if (RustyKeypad::getType() == T9)
+    if (RustyKeypad::getType() == RKP_T9)
     {
         if (isOverT9Duration())
         {
             nextCharIndex();
-            setEvent(KEY_DOWN);
+            setEvent(RKP_KEY_DOWN);
             return true;
         }
         return false;
@@ -94,7 +75,7 @@ bool RustyKey::checkTimeout()
 
     if (isOverKeydownDuration())
     {
-        setEvent(KEY_UP);
+        setEvent(RKP_KEY_UP);
         return true;
     }
     return false;
@@ -117,22 +98,22 @@ bool RustyKey::isPressed()
 
 void RustyKey::analyzeState()
 {
-    if(getCurrentEvent()==PRESS_DELETE)
+    if (getCurrentEvent() == RKP_PRESS_DELETE)
     {
-        setEvent(RELEASE_DELETE);
+        setEvent(RKP_RELEASE_DELETE);
         return;
     }
-    if (RustyKeypad::getType() == T9)
+    if (RustyKeypad::getType() == RKP_T9)
     {
-        setEvent(KEY_UP);
+        setEvent(RKP_KEY_UP);
         return;
     }
     if ((millis() - last_activity_ts) > RustyKeypad::long_press_duration)
     {
-        setEvent(LONG_PRESS);
+        setEvent(RKP_LONG_PRESS);
         return;
     }
-    setEvent(KEY_UP);
+    setEvent(RKP_KEY_UP);
 }
 
 bool RustyKey::read()
@@ -157,7 +138,7 @@ void RustyKey::reset()
 {
     char_index = 0;
     current_state = false;
-    setEvent(KEY_IDLE);
+    setEvent(RKP_KEY_IDLE);
 }
 
 void RustyKey::enable()
@@ -224,4 +205,27 @@ bool RustyKey::isEqual(const RustyKey *key)
         return false;
 
     return getFirstKeyCode() == key->getFirstKeyCode();
+}
+
+bool RustyKey::analyzeSameState(bool new_state)
+{
+    if (new_state && current_event != RKP_WAIT)
+    {
+        if (current_event == RKP_PRESS_DELETE)
+        {
+            return false;
+        }
+        if (current_event == RKP_KEY_UP)
+        {
+            char_index = 0;
+            setEvent(RKP_KEY_DOWN);
+            return true;
+        }
+        setEvent(RKP_WAIT);
+    }
+    else if (!new_state && current_event != RKP_KEY_IDLE)
+    {
+        setEvent(RKP_KEY_IDLE);
+    }
+    return !current_state ? false : checkTimeout();
 }

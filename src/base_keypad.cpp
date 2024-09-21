@@ -8,7 +8,7 @@ uint8_t BaseRustyKeypad::max_text_length{20};
 unsigned int BaseRustyKeypad::keypad_data_cursor{0};
 char BaseRustyKeypad::float_char{'*'};
 char BaseRustyKeypad::delete_key{'*'};
-KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::INTEGER};
+KeypadTypes BaseRustyKeypad::keypad_type{KeypadTypes::RKP_INTEGER};
 bool BaseRustyKeypad::enabled{false};
 bool BaseRustyKeypad::interrupted{false};
 bool BaseRustyKeypad::has_delete_key{true};

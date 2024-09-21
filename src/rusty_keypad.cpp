@@ -35,7 +35,7 @@ void RustyKeypad::scan()
         if (temp->data->isPressed())
         {
             pressed_keys += String(temp->data->getKeyCode());
-            if (getType() == T9)
+            if (getType() == RKP_T9)
             {
                 setWaitKey(temp->data);
                 break;
@@ -58,13 +58,13 @@ bool RustyKeypad::checkKey(RustyKey *key)
     }
     switch (key->getCurrentEvent())
     {
-    case KeypadEventTypes::KEY_DOWN:
+    case KeypadEventTypes::RKP_KEY_DOWN:
         if (keyDownListener != NULL)
         {
             keyDownListener(key->getKeyCode());
         }
         break;
-    case KeypadEventTypes::KEY_UP:
+    case KeypadEventTypes::RKP_KEY_UP:
         appendKey(key->getKeyCode());
         if (keyUpListener != NULL)
         {
@@ -72,7 +72,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
         }
         resetWaitKey();
         break;
-    case KeypadEventTypes::LONG_PRESS:
+    case KeypadEventTypes::RKP_LONG_PRESS:
         if (longPressListener != NULL)
         {
             longPressListener(key->getKeyCode());
@@ -80,7 +80,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
         resetWaitKey();
         break;
 
-    case KeypadEventTypes::PRESS_DELETE:
+    case KeypadEventTypes::RKP_PRESS_DELETE:
         setWaitKey(key);
         deleteChar();
         if (onDeleteListener != NULL)
@@ -88,7 +88,7 @@ bool RustyKeypad::checkKey(RustyKey *key)
             onDeleteListener(getDeleteKey());
         }
         break;
-    case KeypadEventTypes::RELEASE_DELETE:
+    case KeypadEventTypes::RKP_RELEASE_DELETE:
         resetWaitKey();
         break;
     default:

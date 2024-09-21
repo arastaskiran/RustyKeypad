@@ -41,25 +41,28 @@
 typedef enum KeypadEventTypes
 {
     /** The key is idle, not pressed. */
-    KEY_IDLE,
+    RKP_KEY_IDLE,
 
     /** The key has just been pressed down. */
-    KEY_DOWN,
+    RKP_KEY_DOWN,
 
     /** The key has been released. */
-    KEY_UP,
+    RKP_KEY_UP,
 
     /** The key is held down for a long press. */
-    LONG_PRESS,
+    RKP_LONG_PRESS,
 
-    /** The key is waiting for the next interaction. */
-    WAIT,
+    /** The key is RKP_WAITing for the next interaction. */
+    RKP_WAIT,
 
     /** The delete key press event. */
-    PRESS_DELETE,
+    RKP_PRESS_DELETE,
 
     /** The delete key release event. */
-    RELEASE_DELETE
+    RKP_RELEASE_DELETE,
+
+    /** Clears the screen, for example, when a specific key combination is pressed. */
+    RKP_CLEAR_SCREEN
 } KeypadEventTypes;
 
 class RustyKey
@@ -143,7 +146,7 @@ public:
      *
      * This method returns the current event associated with the key, which can be used to determine
      * the state or action performed on the key. The event types are defined in the `KeypadEventTypes` enum
-     * and may include states such as KEY_IDLE, KEY_DOWN, KEY_UP, LONG_PRESS, and WAIT.
+     * and may include states such as RKP_KEY_IDLE, RKP_KEY_DOWN, RKP_KEY_UP, RKP_LONG_PRESS, and RKP_WAIT.
      *
      * @return The current `KeypadEventTypes` enum value representing the key's event.
      */
@@ -196,7 +199,7 @@ private:
      * @brief The current event type for the key.
      *
      * This variable holds the current event associated with the key, represented by the `KeypadEventTypes` enum.
-     * It indicates the key's current state or action, such as being idle, pressed down, released, long-pressed, or waiting.
+     * It indicates the key's current state or action, such as being idle, pressed down, released, long-pressed, or RKP_WAITing.
      * The event type helps in managing and responding to various key interactions during operation.
      */
     KeypadEventTypes current_event;
@@ -232,7 +235,7 @@ private:
      * @brief The index of the current character associated with the key.
      *
      * This variable holds the index of the character that is currently selected or active on the key.
-     * In T9 mode, where each key represents multiple characters, this index tracks which character
+     * In RKP_T9 mode, where each key represents multiple characters, this index tracks which character
      * is being displayed or used based on the duration of the key press. The index changes as the key
      * is held down to cycle through the available characters.
      */
@@ -280,7 +283,7 @@ private:
      *
      * This method determines whether the key event is a KeyUp or a LongPress when the key is released.
      * It uses the `last_activity_ts` timestamp and the `long_press_duration` to make this determination.
-     * If the keyboard is configured in T9 mode, this method will always return a KeyUp event because
+     * If the keyboard is configured in RKP_T9 mode, this method will always return a KeyUp event because
      * pressing and holding the key is required to cycle through the alternative characters associated with the key.
      */
     void analyzeState();
@@ -291,14 +294,14 @@ private:
      * This method determines if the key has been pressed for a duration that triggers specific actions
      * based on the current keyboard mode:
      *
-     * - **T9 Mode:** If the key is held down long enough, it will advance to the next character in the
+     * - **RKP_T9 Mode:** If the key is held down long enough, it will advance to the next character in the
      *   sequence associated with the key. This is done by incrementing the `char_index` and triggering
-     *   a `KEY_DOWN` event. The method uses `t9_duration` and `last_activity_ts` to check if the timeout
+     *   a `RKP_KEY_DOWN` event. The method uses `t9_duration` and `last_activity_ts` to check if the timeout
      *   threshold has been reached.
      *
      * - **Other Modes:** In standard modes, holding the key for a set duration simulates releasing and
-     *   pressing the key again. When the timeout threshold is exceeded, it first triggers a `KEY_UP` event,
-     *   followed by a `KEY_DOWN` event in the next loop iteration. This behavior is controlled using
+     *   pressing the key again. When the timeout threshold is exceeded, it first triggers a `RKP_KEY_UP` event,
+     *   followed by a `RKP_KEY_DOWN` event in the next loop iteration. This behavior is controlled using
      *   `keydown_timeout` and `last_activity_ts`.
      *
      * @return `true` if the timeout condition is met and actions are performed, `false` otherwise.
@@ -308,7 +311,7 @@ private:
     /**
      * @brief Sets the event type for the key and resets the activity timestamp.
      *
-     * This method assigns a specific event type to the key, such as `KEY_DOWN`, `KEY_UP`, `LONG_PRESS`, etc.
+     * This method assigns a specific event type to the key, such as `RKP_KEY_DOWN`, `RKP_KEY_UP`, `RKP_LONG_PRESS`, etc.
      * Additionally, it resets the `last_activity_ts` timestamp to the current time, marking the moment when
      * the event was set. This helps in tracking the time of the last key interaction and managing subsequent
      * key events accurately.
@@ -330,10 +333,10 @@ private:
     bool isScanAvailable();
 
     /**
-     * @brief Sets the next character index for T9 mode.
+     * @brief Sets the next character index for RKP_T9 mode.
      *
      * This method updates the character index to the next character in the sequence associated with the key
-     * when the keyboard is in T9 mode. It is used to cycle through the characters that a key represents,
+     * when the keyboard is in RKP_T9 mode. It is used to cycle through the characters that a key represents,
      * allowing users to select the desired character by pressing and holding the key.
      */
     void nextCharIndex();
@@ -348,26 +351,38 @@ private:
     void resetActivityTimer();
 
     /**
-     * @brief Checks if the key press duration exceeds the T9 threshold.
+     * @brief Checks if the key press duration exceeds the RKP_T9 threshold.
      *
      * This function determines whether the duration for which a key has been held down
-     * surpasses the predefined threshold for T9 input. It is used to manage input
-     * behavior in T9 mode by ensuring that prolonged key presses are handled appropriately.
+     * surpasses the predefined threshold for RKP_T9 input. It is used to manage input
+     * behavior in RKP_T9 mode by ensuring that prolonged key presses are handled appropriately.
      *
-     * @return bool `true` if the key press duration exceeds the T9 threshold, `false` otherwise.
+     * @return bool `true` if the key press duration exceeds the RKP_T9 threshold, `false` otherwise.
      */
     bool isOverT9Duration();
 
     /**
-     * @brief Checks if the key press duration exceeds the KEY_DOWN threshold.
+     * @brief Checks if the key press duration exceeds the RKP_KEY_DOWN threshold.
      *
      * This function determines whether the duration for which a key has been held down
-     * exceeds the predefined threshold for KEY_DOWN events. It is used to manage input
+     * exceeds the predefined threshold for RKP_KEY_DOWN events. It is used to manage input
      * behavior by identifying if a prolonged key press has occurred.
      *
-     * @return bool `true` if the key press duration exceeds the KEY_DOWN threshold, `false` otherwise.
+     * @return bool `true` if the key press duration exceeds the RKP_KEY_DOWN threshold, `false` otherwise.
      */
     bool isOverKeydownDuration();
-   
+
+    /**
+     * @brief Analyzes and handles button actions based on the current and new states.
+     *
+     * This function determines the appropriate action when a button is held down, depending on
+     * the specific configuration. If the button is in the same state (`new_state` is the same as
+     * the current state), the function will decide the next step, such as whether to trigger a
+     * long press action or ignore further input.
+     *
+     * @param new_state The new state of the button (true if pressed, false if not).
+     * @return A boolean value indicating if the state has changed or if an action needs to be performed.
+     */
+    bool analyzeSameState(bool new_state);
 };
 #endif
