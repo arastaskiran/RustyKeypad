@@ -57,6 +57,45 @@ RustyKeypad::keyboardSetup(
 );
 
 ```
+### Information About the Demo Hardware
+> [!TIP]
+> The internal structure of the hardware I used in the demo application. This may differ from yours. By understanding the logic of the electrical schematic shown above, you can locate the pins with your multimeter, or you can review the documentation of the keypad if it is available.
+<pre>
++---------------------------------------+
+|                  Keypad               |
+|             +---+---+---+             |
+|             | 1 | 2 | 3 |             |
+|             +---+---+---+             |
+|             | 4 | 5 | 6 |             |
+|             +---+---+---+             |
+|             | 7 | 8 | 9 |             |
+|             +---+---+---+             |
+|             | * | 0 | # |             |
+|             +---+---+---+             |
++---------------------------------------+
+  |   |   |   |   |   |   |   |   |
+ (1) (2) (3) (4) (5) (6) (7) (8) (9)
+  |   |   |   |   |   |   |   |   |
+(N/A) |   |   |   |   |   |   | (N/A)
+      |   |   |   |   |   |   |
+     C2   R1  C1  R4  C3  R3  R2
+</pre>
+> [!TIP]
+> The keypad and Arduino connections in the demo application are made as follows.
+<pre>
++-------------+                       +-------------+
+|             |                       |             |
+|             |-(2)-------------(D7)--|             |
+|   KEYPAD    |-(3)-------------(D2)--|   ARDUINO   |
+|             |-(4)-------------(D6)--|    NANO     |
+|             |-(5)-------------(D5)--|             |
+|             |-(6)-------------(D8)--|             |
+|             |-(7)-------------(D4)--|             |
+|             |-(8)-------------(D3)--|             |
+|             |                       |             |
+|             |                       |             |
++-------------+                       +-------------+
+</pre>
 
 ## Libraries
 
