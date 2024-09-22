@@ -140,7 +140,7 @@ const char *keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
 /**
  * Setup the keypad with the specified configuration.
  */
-keyboardSetup(
+RustyKeypad::keyboardSetup(
     keypadFactoryMap,
     rows,
     cols,
