@@ -104,6 +104,7 @@ void BaseRustyKeypad::enable()
     {
         enabled = true;
         reset();
+        KeyList->enable();
     }
 }
 

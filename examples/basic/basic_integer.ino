@@ -2,12 +2,12 @@
 
 void keyUp(char x)
 {
-  Serial.println(x);
+  // Serial.println(x);
 
 }
 void multipleKey(String x)
 {
-  Serial.println(x);
+  // Serial.println(x);
 }
 
 void keyDown(char x)
@@ -20,7 +20,7 @@ void setup() {
   RustyKeypad::addKeyUpListener(keyUp);
   RustyKeypad::addMultipleKeyListener(multipleKey);
   RustyKeypad::addKeyDownListener(keyDown);
-  RustyKeypad::setType(INTEGER);
+  RustyKeypad::setType(RKP_INTEGER);
   RustyKeypad::enable();
   
 }

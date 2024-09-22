@@ -148,6 +148,18 @@ public:
      *       logic of the `RustyKey` class.
      */
     void disable();
+    
+    /**
+     * @brief Enables all `RustyKey` elements in the list.
+     *
+     * This method iterates through all `RustyKeyNode` objects in the list and calls a method to
+     * enable each `RustyKey` element. It effectively marks all elements in the list as active or
+     * operational.
+     *
+     * @note The specific implementation of enabling the `RustyKey` elements depends on the internal
+     *       logic of the `RustyKey` class.
+     */
+    void enable();
 
     /**
      * @brief Retrieves the head node of the list.

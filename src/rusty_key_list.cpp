@@ -67,6 +67,16 @@ void RustyKeyList::disable()
     }
 }
 
+void RustyKeyList::enable()
+{
+    RustyKeyNode *temp = head;
+    while (temp != nullptr)
+    {
+        temp->data->enable();
+        temp = temp->next;
+    }
+}
+
 RustyKeyNode *RustyKeyList::getHead() const
 {
     return head;
