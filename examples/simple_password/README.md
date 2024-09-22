@@ -8,15 +8,17 @@ I will explain in more detail below.👇
 |---------|---------|
 | ![Resim 1](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/wrong_password.gif?raw=true) | ![Resim 2](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/correct_password.gif?raw=true) |
 
-## PIN Configuration
+## PIN Configuration Example (4x3 Keypad Matrix)
 ```cpp
 /**
  * Configuration for the rows of the keypad matrix.
+ * (GPIO PIN NUMBERS)
  */
 uint8_t rows[MAX_KEYPAD_MATRIX_SIZE] = {2U, 3U, 4U, 5U};
 
 /**
  * Configuration for the columns of the keypad matrix.
+ * (GPIO PIN NUMBERS)
  */
 uint8_t cols[MAX_KEYPAD_MATRIX_SIZE] = {6U, 7U, 8U};
 
