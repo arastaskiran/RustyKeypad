@@ -5,6 +5,6 @@
 .vscode/ipch
 src/main.cpp
 platformio.ini
-include
-lib
+include/
+lib/
 
