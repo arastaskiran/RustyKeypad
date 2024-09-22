@@ -103,7 +103,7 @@ I will explain in more detail below.👇
 
 | WRONG | CORRECT |
 |---------|---------|
-| ![Resim 1](https://github.com/arastaskiran/RustyKeypad/blob/main/examples/assets/wrong_password.gif?raw=true) | ![Resim 2](https://github.com/arastaskiran/RustyKeypad/blob/main/examples/assets/correct_password.gif?raw=true) |
+| ![Resim 1](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/wrong_password.gif?raw=true) | ![Resim 2](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/correct_password.gif?raw=true) |
 
 
 
