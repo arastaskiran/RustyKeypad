@@ -9,6 +9,8 @@ I will explain in more detail below.👇
 | ![Resim 1](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/wrong_password.gif?raw=true) | ![Resim 2](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/correct_password.gif?raw=true) |
 
 ## PIN Configuration Example (4x3 Keypad Matrix)
+> [!NOTE]
+> The benefits listed here are the default settings. Be sure to configure your own keypad settings within the setup() method using the logic shown below.
 ```cpp
 /**
  * Configuration for the rows of the keypad matrix.
