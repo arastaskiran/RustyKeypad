@@ -8,7 +8,51 @@ I will explain in more detail below.👇
 |---------|---------|
 | ![Resim 1](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/wrong_password.gif?raw=true) | ![Resim 2](https://github.com/arastaskiran/RustyKeypad/blob/main/.platform/assets/correct_password.gif?raw=true) |
 
+## PIN Configuration
+```cpp
+/**
+ * Configuration for the rows of the keypad matrix.
+ */
+uint8_t rows[MAX_KEYPAD_MATRIX_SIZE] = {2U, 3U, 4U, 5U};
 
+/**
+ * Configuration for the columns of the keypad matrix.
+ */
+uint8_t cols[MAX_KEYPAD_MATRIX_SIZE] = {6U, 7U, 8U};
+
+/**
+ * Maximum number of rows in the keypad matrix.
+ */
+uint8_t max_row_length=4;
+
+/**
+ * Maximum number of columns in the keypad matrix.
+ */
+uint8_t max_col_length=3;
+
+/**
+ * Keypad layout mapping.
+ */
+const char *keypadFactoryMap[MAX_KEYPAD_MATRIX_SIZE][MAX_KEYPAD_MATRIX_SIZE] = {
+    {"1.,?!'\"-()@/:_", "2ABCabc",   "3DEFdef"  },
+    {"4GHIghiİ",        "5JKLjkl",   "6MNOmnoÖö"},
+    {"7PQRSpqrsŞş",     "8TUVtuvÜü", "9WXYZwxyz"},
+    {"*",                "0 +",      "#"},
+};
+
+/**
+ * Setup the keypad with the specified configuration.
+ */
+keyboardSetup(
+    keypadFactoryMap,
+    rows,
+    cols,
+    max_row_length,
+    max_col_length,
+    INPUT_PULLUP
+);
+
+```
 
 ## Libraries
 
